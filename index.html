@@ -24,14 +24,12 @@
         left: 0;
     }
     
-    #game #layer-0 {
+    #game #layer-main {
         background: url(img/floor-tile.png);
     }
     
     #game .layer .sprite {
         position: absolute;
-        width: 32px;
-        height: 32px;
     }
     
     #game .layer .sprite span {
@@ -66,23 +64,19 @@
 </head>
 <body>
     <div id="game">
-        <div id="layer-0" class="layer">
-            <div id="sprite-0" class="sprite">
-                <span class="guy frame-0">
-                    
-                </span>
-            </div>
-        </div>
+        
     </div>
     <script type="text/javascript" src="js/jquery-1.5.min.js"></script>
+    <script type="text/javascript" src="js/game.js"></script>
     <script type="text/javascript">
-    var frame = 0;
+    var world = GameJS.world('#game');
+    world.defineAnimation('guy', { frames: 6 });
+    var layer = world.layer('main');
+    var sprite = world.sprite('guy');
+    sprite.addAnimation('guy');
+    layer.add(sprite);
     setInterval(function() {
-        var next = (frame+1) % 6;
-        $('#sprite-0 span.guy')
-            .removeClass('frame-'+frame)
-            .addClass('frame-'+next);
-        frame = next;
+        sprite.nextFrame();
     }, 250);
     </script>
 </body>
