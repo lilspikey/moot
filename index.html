@@ -42,12 +42,25 @@
         width: 32px;
         height: 32px;
         background-image: url(img/guy.png);
+        background-repeat: no-repeat;
     }
     #game .layer .sprite span.guy.frame-0 {
         background-position: 0 0;
     }
     #game .layer .sprite span.guy.frame-1 {
-        background-position: 32px 0;
+        background-position: -32px 0;
+    }
+    #game .layer .sprite span.guy.frame-2 {
+        background-position: -64px 0;
+    }
+    #game .layer .sprite span.guy.frame-3 {
+        background-position: -96px 0;
+    }
+    #game .layer .sprite span.guy.frame-4 {
+        background-position: -128px 0;
+    }
+    #game .layer .sprite span.guy.frame-5 {
+        background-position: -160px 0;
     }
   </style>
 </head>
@@ -65,12 +78,12 @@
     <script type="text/javascript">
     var frame = 0;
     setInterval(function() {
-        var next = (frame+1) % 2;
+        var next = (frame+1) % 6;
         $('#sprite-0 span.guy')
             .removeClass('frame-'+frame)
             .addClass('frame-'+next);
         frame = next;
-    }, 500);
+    }, 250);
     </script>
 </body>
 </html>
