@@ -41,24 +41,13 @@
         height: 32px;
         background-image: url(img/guy.png);
         background-repeat: no-repeat;
-    }
-    #game .layer .sprite span.guy.frame-0 {
         background-position: 0 0;
     }
     #game .layer .sprite span.guy.frame-1 {
         background-position: -32px 0;
     }
-    #game .layer .sprite span.guy.frame-2 {
-        background-position: -64px 0;
-    }
     #game .layer .sprite span.guy.frame-3 {
-        background-position: -96px 0;
-    }
-    #game .layer .sprite span.guy.frame-4 {
-        background-position: -128px 0;
-    }
-    #game .layer .sprite span.guy.frame-5 {
-        background-position: -160px 0;
+        background-position: -64px 0;
     }
   </style>
 </head>
@@ -70,7 +59,7 @@
     <script type="text/javascript" src="js/game.js"></script>
     <script type="text/javascript">
     var world = GameJS.world('#game');
-    world.defineAnimation('guy', { frames: 6 });
+    world.defineAnimation('guy', { frames: 4 });
     var layer = world.layer('main');
     var sprite = world.sprite('guy');
     sprite.addAnimation('guy');
