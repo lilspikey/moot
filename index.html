@@ -36,17 +36,22 @@
         position: absolute;
     }
     
-    #game .layer .sprite span.guy {
+    #game .layer .sprite span.guy-stand,
+    #game .layer .sprite span.guy-walk {
         width: 32px;
         height: 32px;
         background-image: url(img/guy.png);
         background-repeat: no-repeat;
         background-position: 0 0;
     }
-    #game .layer .sprite span.guy.frame-1 {
+    #game .layer .sprite span.guy-stand.frame-17,
+    #game .layer .sprite span.guy-stand.frame-18 {
+        background-position: 0 -32px;
+    }
+    #game .layer .sprite span.guy-walk.frame-1 {
         background-position: -32px 0;
     }
-    #game .layer .sprite span.guy.frame-3 {
+    #game .layer .sprite span.guy-walk.frame-3 {
         background-position: -64px 0;
     }
   </style>
@@ -59,14 +64,27 @@
     <script type="text/javascript" src="js/game.js"></script>
     <script type="text/javascript">
     var world = GameJS.world('#game');
-    world.defineAnimation('guy', { frames: 4 });
+    world.defineAnimation('guy-walk', { frames: 4 });
+    world.defineAnimation('guy-stand', { frames: 19 });
     var layer = world.layer('main');
     var sprite = world.sprite('guy');
-    sprite.addAnimation('guy');
+    sprite.addAnimation('guy-stand');
     layer.add(sprite);
     setInterval(function() {
         sprite.nextFrame();
     }, 250);
+    
+    var walk = false;
+    $('.sprite').live('click', function(event) {
+        event.preventDefault();
+        walk = !walk;
+        if ( walk ) {
+            sprite.removeAnimation('guy-stand').addAnimation('guy-walk');
+        }
+        else {
+            sprite.removeAnimation('guy-walk').addAnimation('guy-stand');
+        }
+    });
     </script>
 </body>
 </html>

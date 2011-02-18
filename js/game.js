@@ -51,6 +51,10 @@ var GameJS = (function($) {
                             frames[name] = 0;
                             return obj;
                         },
+                        removeAnimation: function(name) {
+                            s.find('span.' + name).remove();
+                            return obj;
+                        },
                         nextFrame: function() {
                             for ( var name in frames ) {
                                 var frame = frames[name];
