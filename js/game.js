@@ -31,36 +31,64 @@ var GameJS = (function($) {
                         sprite_elements[id]= $('<div class="sprite"></div>').attr({id: 'sprite-'+id});
                     }
                     var s = sprite_elements[id];
-                    var frames = {};
+                    var _animations = {};
+                    var _obj = {x:0, y:0, width:0, height:0};
                     
                     var obj = {
                         id: function() {
                             return id;
                         },
+                        x: function(x) {
+                            if (x !== undefined) {
+                                s.css('left', x);
+                                _obj.x = x;
+                                return obj;
+                            }
+                            return _obj.x;
+                        },
+                        y: function(y) {
+                            if (y !== undefined) {
+                                s.css('top', y);
+                                _obj.y = y;
+                                return obj;
+                            }
+                            return _obj.y;
+                        },
                         width: function(w) {
-                            s.width(w);
-                            return obj;
+                            if (w !== undefined) {
+                                s.width(w);
+                                _obj.width = w;
+                                return obj;
+                            }
+                            return _obj.width;
                         },
                         height: function(h) {
-                            s.height(h);
-                            return obj;
+                            if (h !== undefined) {
+                                s.height(h);
+                                _obj.height = h;
+                                return obj;
+                            }
+                            return _obj.height;
                         },
                         addAnimation: function(name) {
-                            var a = $('<span></span>').addClass(name);
-                            s.append(a);
-                            frames[name] = 0;
+                            if ( !(name in _animations) ) {
+                                var a = $('<span></span>').addClass(name);
+                                s.append(a);
+                                _animations[name] = { frame: 0 };
+                            }
                             return obj;
                         },
                         removeAnimation: function(name) {
                             s.find('span.' + name).remove();
+                            delete _animations[name];
                             return obj;
                         },
                         nextFrame: function() {
-                            for ( var name in frames ) {
-                                var frame = frames[name];
+                            for ( var name in _animations ) {
+                                var frame = _animations[name].frame;
                                 var next = (frame + 1) % animations[name].frames;
                                 s.find('span.' + name).removeClass('frame-'+frame).addClass('frame-'+next);
-                                frames[name] = next;
+                                _animations[name].frame = next;
                             }
                         }
                     };

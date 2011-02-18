@@ -70,20 +70,50 @@
     var sprite = world.sprite('guy');
     sprite.addAnimation('guy-stand');
     layer.add(sprite);
+    
+    var dir = {dx:0, dy:0};
+    var pos = {x:0, y:0};
+    
     setInterval(function() {
         sprite.nextFrame();
-    }, 250);
+        pos.x += dir.dx;
+        pos.y += dir.dy;
+        sprite.x(pos.x).y(pos.y);
+    }, 100);
     
-    var walk = false;
-    $('.sprite').live('click', function(event) {
-        event.preventDefault();
-        walk = !walk;
-        if ( walk ) {
+    var update_animation = function() {
+        if ( dir.dx || dir.dy ) {
             sprite.removeAnimation('guy-stand').addAnimation('guy-walk');
         }
         else {
             sprite.removeAnimation('guy-walk').addAnimation('guy-stand');
         }
+    };
+    
+    $(document).bind('keydown', function(event) {
+        if ( !(37 <= event.keyCode && event.keyCode <= 40) ) {
+            return;
+        }
+        event.preventDefault();
+        switch(event.keyCode) {
+            case 38: dir.dy = -1; break;
+            case 40: dir.dy =  1; break;
+            case 37: dir.dx = -1; break;
+            case 39: dir.dx =  1; break;
+        }
+        update_animation();
+    }).bind('keyup', function(event) {
+        if ( !(37 <= event.keyCode && event.keyCode <= 40) ) {
+            return;
+        }
+        event.preventDefault();
+        switch(event.keyCode) {
+            case 38: dir.dy = 0; break;
+            case 40: dir.dy = 0; break;
+            case 37: dir.dx = 0; break;
+            case 39: dir.dx = 0; break;
+        }
+        update_animation();
     });
     </script>
 </body>
