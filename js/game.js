@@ -6,7 +6,7 @@ var GameJS = (function($) {
             var sprite_elements = {};
             var animations = {};
             
-            return {
+            var obj = {
                 layer: function(id) {
                     if ( !(id in layer_elements) ) {
                         layer_elements[id] = $('<div class="layer"></div>').attr({id: 'layer-'+id});
@@ -22,8 +22,29 @@ var GameJS = (function($) {
                     };
                 },
                 
-                defineAnimation: function(name, obj) {
-                    animations[name] = obj;
+                defineAnimation: function(name, params) {
+                    animations[name] = params;
+                    return obj;
+                },
+                
+                listAnimations: function(fps) {
+                    if ( fps === undefined ) {
+                        fps = 10;
+                    }
+                    // for debugging list all animations defined
+                    var list = $('<dl class="debug-animations"></dl>');
+                    for ( var name in animations ) {
+                        var dd = $('<dd></dd>');
+                        var sprite = obj.sprite('debug-'+name);
+                        sprite.animation(name);
+                        dd.append(sprite_elements['debug-'+name]);
+                        list.append($('<dt></dt>').text(name)).append(dd);
+                        
+                        (function(sprite) {
+                            setInterval(function() { sprite.nextFrame(); }, (1000/fps));
+                        })(sprite);
+                    }
+                    world_element.after(list)
                 },
                 
                 sprite: function(id) {
@@ -106,6 +127,7 @@ var GameJS = (function($) {
                     return obj;
                 }
             }
+            return obj;
         }
     };
 })(jQuery);

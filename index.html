@@ -32,28 +32,34 @@
         position: absolute;
     }
     
-    #game .layer .sprite span {
+    .debug-animations .sprite {
+        width: 32px;
+        height: 32px;
+        position: relative;
+    }
+    
+    .sprite span {
         position: absolute;
     }
     
-    #game .layer .sprite span.guy-stand,
-    #game .layer .sprite span.guy-walk {
+    .sprite span.guy-stand,
+    .sprite span.guy-walk {
         width: 32px;
         height: 32px;
         background-image: url(img/guy.png);
         background-repeat: no-repeat;
         background-position: 0 0;
     }
-    #game .layer .sprite span.guy-stand.frame-17,
-    #game .layer .sprite span.guy-stand.frame-18,
-    #game .layer .sprite span.guy-stand.frame-37,
-    #game .layer .sprite span.guy-stand.frame-38 {
+    .sprite span.guy-stand.frame-17,
+    .sprite span.guy-stand.frame-18,
+    .sprite span.guy-stand.frame-37,
+    .sprite span.guy-stand.frame-38 {
         background-position: 0 -32px;
     }
-    #game .layer .sprite span.guy-walk.frame-1 {
+    .sprite span.guy-walk.frame-1 {
         background-position: -32px 0;
     }
-    #game .layer .sprite span.guy-walk.frame-3 {
+    .sprite span.guy-walk.frame-3 {
         background-position: -64px 0;
     }
   </style>
@@ -66,12 +72,14 @@
     <script type="text/javascript" src="js/game.js"></script>
     <script type="text/javascript">
     var world = GameJS.world('#game');
-    world.defineAnimation('guy-walk', { frames: 4 });
-    world.defineAnimation('guy-stand', { frames: 101 });
+    world.defineAnimation('guy-walk', { frames: 4 })
+         .defineAnimation('guy-stand', { frames: 101 });
     var layer = world.layer('main');
     var sprite = world.sprite('guy');
     sprite.animation('main', 'guy-stand');
     layer.add(sprite);
+    
+    world.listAnimations();
     
     var dir = {dx:0, dy:0};
     var pos = {x:0, y:0};
