@@ -83,12 +83,19 @@
         sprite.x(pos.x).y(pos.y);
     }, 100);
     
+    var animation = 'guy-stand';
     var update_animation = function() {
         if ( dir.dx || dir.dy ) {
-            sprite.animation('main', 'guy-walk');
+            if ( animation != 'guy-walk' ) {
+                sprite.animation('main', 'guy-walk');
+                animation = 'guy-walk';
+            }
         }
         else {
-            sprite.animation('main', 'guy-stand');
+            if ( animation != 'guy-stand' ) {
+                sprite.animation('main', 'guy-stand');
+                animation = 'guy-stand';
+            }
         }
     };
     
