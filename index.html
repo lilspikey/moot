@@ -42,25 +42,46 @@
         position: absolute;
     }
     
-    .sprite span.guy-stand,
-    .sprite span.guy-walk {
+    .sprite span.guy-right-stand,
+    .sprite span.guy-right-walk,
+    .sprite span.guy-left-stand,
+    .sprite span.guy-left-walk {
         width: 32px;
         height: 32px;
         background-image: url(img/guy.png);
         background-repeat: no-repeat;
+    }
+    .sprite span.guy-right-stand,
+    .sprite span.guy-right-walk {
         background-position: 0 0;
     }
-    .sprite span.guy-stand.frame-17,
-    .sprite span.guy-stand.frame-18,
-    .sprite span.guy-stand.frame-37,
-    .sprite span.guy-stand.frame-38 {
+    .sprite span.guy-right-stand.frame-17,
+    .sprite span.guy-right-stand.frame-18,
+    .sprite span.guy-right-stand.frame-37,
+    .sprite span.guy-right-stand.frame-38 {
         background-position: 0 -32px;
     }
-    .sprite span.guy-walk.frame-1 {
+    .sprite span.guy-right-walk.frame-1 {
         background-position: -32px 0;
     }
-    .sprite span.guy-walk.frame-3 {
+    .sprite span.guy-right-walk.frame-3 {
         background-position: -64px 0;
+    }
+    .sprite span.guy-left-stand,
+    .sprite span.guy-left-walk {
+        background-position: -64px -64px;
+    }
+    .sprite span.guy-left-stand.frame-17,
+    .sprite span.guy-left-stand.frame-18,
+    .sprite span.guy-left-stand.frame-37,
+    .sprite span.guy-left-stand.frame-38 {
+        background-position: -64px -96px;
+    }
+    .sprite span.guy-left-walk.frame-1 {
+        background-position: -32px -64px;
+    }
+    .sprite span.guy-left-walk.frame-3 {
+        background-position: 0 -64px;
     }
   </style>
 </head>
@@ -72,11 +93,13 @@
     <script type="text/javascript" src="js/game.js"></script>
     <script type="text/javascript">
     var world = GameJS.world('#game');
-    world.defineAnimation('guy-walk', { frames: 4 })
-         .defineAnimation('guy-stand', { frames: 101 });
+    world.defineAnimation('guy-right-walk', { frames: 4 })
+         .defineAnimation('guy-left-walk', { frames: 4 })
+         .defineAnimation('guy-right-stand', { frames: 101 })
+         .defineAnimation('guy-left-stand', { frames: 101 });;
     var layer = world.layer('main');
     var sprite = world.sprite('guy');
-    sprite.animation('main', 'guy-stand');
+    sprite.animation('main', 'guy-right-stand');
     layer.add(sprite);
     
     world.listAnimations();
@@ -91,19 +114,26 @@
         sprite.x(pos.x).y(pos.y);
     }, 100);
     
-    var animation = 'guy-stand';
+    var animation = 'guy-right-stand';
     var update_animation = function() {
+        var new_animation = animation;
         if ( dir.dx || dir.dy ) {
-            if ( animation != 'guy-walk' ) {
-                sprite.animation('main', 'guy-walk');
-                animation = 'guy-walk';
+            if ( dir.dx == -1 ) {
+                new_animation = 'guy-left-walk';
+            }
+            else if ( dir.dx == 1 ){
+                new_animation = 'guy-right-walk';
+            }
+            else {
+                new_animation = animation.replace(/stand/, 'walk');
             }
         }
         else {
-            if ( animation != 'guy-stand' ) {
-                sprite.animation('main', 'guy-stand');
-                animation = 'guy-stand';
-            }
+            new_animation = animation.replace(/walk/, 'stand');
+        }
+        if ( animation != new_animation ) {
+            sprite.animation('main', new_animation);
+            animation = new_animation;
         }
     };
     
