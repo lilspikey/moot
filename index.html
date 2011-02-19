@@ -70,7 +70,7 @@
     world.defineAnimation('guy-stand', { frames: 101 });
     var layer = world.layer('main');
     var sprite = world.sprite('guy');
-    sprite.addAnimation('guy-stand');
+    sprite.animation('main', 'guy-stand');
     layer.add(sprite);
     
     var dir = {dx:0, dy:0};
@@ -85,10 +85,10 @@
     
     var update_animation = function() {
         if ( dir.dx || dir.dy ) {
-            sprite.removeAnimation('guy-stand').addAnimation('guy-walk');
+            sprite.animation('main', 'guy-walk');
         }
         else {
-            sprite.removeAnimation('guy-walk').addAnimation('guy-stand');
+            sprite.animation('main', 'guy-stand');
         }
     };
     

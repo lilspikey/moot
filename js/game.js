@@ -70,25 +70,36 @@ var GameJS = (function($) {
                             }
                             return _obj.height;
                         },
-                        addAnimation: function(name) {
-                            if ( !(name in _animations) ) {
-                                var a = $('<span></span>').addClass(name);
-                                s.append(a);
-                                _animations[name] = { frame: 0 };
+                        animation: function(name, animation) {
+                            if ( animation === undefined ) {
+                                animation = name;
                             }
+                            if ( !(name in _animations) ) {
+                                var a = $('<span></span>').addClass(animation);
+                                s.append(a);
+                                _animations[name] = { frame: 0, elem: a, animation: animation };
+                            }
+                            else {
+                                _animations[name].elem.attr('class', animation);
+                                _animations[name].animation = animation;
+                            }
+                            
                             return obj;
                         },
                         removeAnimation: function(name) {
-                            s.find('span.' + name).remove();
-                            delete _animations[name];
+                            if ( name in _animations ) {
+                                _animations[name].remove();
+                                delete _animations[name];
+                            }
                             return obj;
                         },
                         nextFrame: function() {
                             for ( var name in _animations ) {
-                                var frame = _animations[name].frame;
-                                var next = (frame + 1) % animations[name].frames;
-                                s.find('span.' + name).removeClass('frame-'+frame).addClass('frame-'+next);
-                                _animations[name].frame = next;
+                                var a = _animations[name];
+                                var frame = a.frame;
+                                var next = (frame + 1) % animations[a.animation].frames;
+                                a.elem.removeClass('frame-'+frame).addClass('frame-'+next);
+                                a.frame = next;
                             }
                         }
                     };
