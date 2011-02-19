@@ -75,14 +75,14 @@ var GameJS = (function($) {
                                 animation = name;
                             }
                             if ( !(name in _animations) ) {
-                                var a = $('<span></span>').addClass(animation);
+                                var a = $('<span></span>');
                                 s.append(a);
-                                _animations[name] = { frame: 0, elem: a, animation: animation };
+                                _animations[name] = { elem: a };
                             }
-                            else {
-                                _animations[name].elem.attr('class', animation);
-                                _animations[name].animation = animation;
-                            }
+                            var a = _animations[name];
+                            a.elem.attr('class', animation);
+                            a.animation = animation;
+                            a.frame = 0;
                             
                             return obj;
                         },
