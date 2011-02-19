@@ -45,7 +45,9 @@
         background-position: 0 0;
     }
     #game .layer .sprite span.guy-stand.frame-17,
-    #game .layer .sprite span.guy-stand.frame-18 {
+    #game .layer .sprite span.guy-stand.frame-18,
+    #game .layer .sprite span.guy-stand.frame-37,
+    #game .layer .sprite span.guy-stand.frame-38 {
         background-position: 0 -32px;
     }
     #game .layer .sprite span.guy-walk.frame-1 {
@@ -65,7 +67,7 @@
     <script type="text/javascript">
     var world = GameJS.world('#game');
     world.defineAnimation('guy-walk', { frames: 4 });
-    world.defineAnimation('guy-stand', { frames: 19 });
+    world.defineAnimation('guy-stand', { frames: 101 });
     var layer = world.layer('main');
     var sprite = world.sprite('guy');
     sprite.addAnimation('guy-stand');
