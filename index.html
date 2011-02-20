@@ -24,7 +24,7 @@
         left: 0;
     }
     
-    #game #layer-main {
+    #game #foreground {
         background: url(img/floor-tile.png);
     }
     
@@ -97,7 +97,7 @@
          .defineAnimation('guy-left-walk', { frames: 4 })
          .defineAnimation('guy-right-stand', { frames: 101 })
          .defineAnimation('guy-left-stand', { frames: 101 });;
-    var layer = world.layer('main');
+    var layer = world.layer('foreground');
     var sprite = world.sprite('guy');
     sprite.animation('main', 'guy-right-stand');
     layer.add(sprite);

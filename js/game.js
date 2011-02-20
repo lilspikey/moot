@@ -9,7 +9,7 @@ var GameJS = (function($) {
             var obj = {
                 layer: function(id) {
                     if ( !(id in layer_elements) ) {
-                        layer_elements[id] = $('<div class="layer"></div>').attr({id: 'layer-'+id});
+                        layer_elements[id] = $('<div class="layer"></div>').attr({id: id});
                         world_element.append(layer_elements[id]);
                     }
                     var l = layer_elements[id];
@@ -49,7 +49,7 @@ var GameJS = (function($) {
                 
                 sprite: function(id) {
                     if ( !(id in sprite_elements) ) {
-                        sprite_elements[id]= $('<div class="sprite"></div>').attr({id: 'sprite-'+id});
+                        sprite_elements[id]= $('<div class="sprite"></div>').attr({id: id});
                     }
                     var s = sprite_elements[id];
                     var _animations = {};
