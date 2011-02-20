@@ -66,6 +66,10 @@ var GameJS = (function($) {
                         return sprites[id];
                     }
                     
+                    if ( proto == undefined ) {
+                        proto = {};
+                    }
+                    
                     var s = $('<div class="sprite"></div>').attr({id: id});
                     var _animations = {};
                     var _obj = {x:0, y:0, width:0, height:0};
