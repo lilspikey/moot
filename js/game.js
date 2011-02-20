@@ -2,24 +2,26 @@ var GameJS = (function($) {
     return {
         world: function(element) {
             var world_element = $(element);
-            var layer_elements = {};
-            var sprite_elements = {};
+            var layers = {};
             var animations = {};
+            var sprites = {};
             
             var obj = {
                 layer: function(id) {
-                    if ( !(id in layer_elements) ) {
-                        layer_elements[id] = $('<div class="layer"></div>').attr({id: id});
-                        world_element.append(layer_elements[id]);
+                    if ( id in layers ) {
+                        return layers[id];
                     }
-                    var l = layer_elements[id];
                     
-                    return {
+                    var l = $('<div class="layer"></div>').attr({id: id});
+                    world_element.append(l);
+                    
+                    var obj ={
                         add: function(sprite) {
-                            var s = sprite_elements[sprite.id()];
-                            l.append(s);
+                            l.append(sprite._elem);
                         }
                     };
+                    layers[id] = obj;
+                    return obj;
                 },
                 
                 defineAnimation: function(name, params) {
@@ -37,7 +39,7 @@ var GameJS = (function($) {
                         var dd = $('<dd></dd>');
                         var sprite = obj.sprite('debug-'+name);
                         sprite.animation(name);
-                        dd.append(sprite_elements['debug-'+name]);
+                        dd.append(sprite._elem);
                         list.append($('<dt></dt>').text(name)).append(dd);
                         
                         (function(sprite) {
@@ -47,15 +49,23 @@ var GameJS = (function($) {
                     world_element.after(list)
                 },
                 
-                sprite: function(id) {
-                    if ( !(id in sprite_elements) ) {
-                        sprite_elements[id]= $('<div class="sprite"></div>').attr({id: id});
+                animate: function() {
+                    for ( var id in sprites ) {
+                        sprites[id].animate();
                     }
-                    var s = sprite_elements[id];
+                },
+                
+                sprite: function(id) {
+                    if ( id in sprites ) {
+                        return sprites[id];
+                    }
+                    
+                    var s = $('<div class="sprite"></div>').attr({id: id});
                     var _animations = {};
                     var _obj = {x:0, y:0, width:0, height:0};
                     
                     var obj = {
+                        _elem: s,
                         id: function() {
                             return id;
                         },
@@ -124,6 +134,7 @@ var GameJS = (function($) {
                             }
                         }
                     };
+                    sprites[id] = obj;
                     return obj;
                 }
             }

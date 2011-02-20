@@ -109,7 +109,7 @@
     var pos = {x:0, y:0};
     
     setInterval(function() {
-        sprite.animate();
+        world.animate();
         pos.x += dir.dx;
         pos.y += dir.dy;
         sprite.x(pos.x).y(pos.y);
