@@ -41,7 +41,7 @@ var GameJS = (function($) {
                         list.append($('<dt></dt>').text(name)).append(dd);
                         
                         (function(sprite) {
-                            setInterval(function() { sprite.nextFrame(); }, (1000/fps));
+                            setInterval(function() { sprite.animate(); }, (1000/fps));
                         })(sprite);
                     }
                     world_element.after(list)
@@ -114,7 +114,7 @@ var GameJS = (function($) {
                             }
                             return obj;
                         },
-                        nextFrame: function() {
+                        animate: function() {
                             for ( var name in _animations ) {
                                 var a = _animations[name];
                                 var frame = a.frame;
