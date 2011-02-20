@@ -55,7 +55,13 @@ var GameJS = (function($) {
                     }
                 },
                 
-                sprite: function(id) {
+                update: function() {
+                    for ( var id in sprites ) {
+                        sprites[id].update();
+                    }
+                },
+                
+                sprite: function(id, proto) {
                     if ( id in sprites ) {
                         return sprites[id];
                     }
@@ -132,10 +138,13 @@ var GameJS = (function($) {
                                 a.elem.removeClass('frame-'+frame).addClass('frame-'+next);
                                 a.frame = next;
                             }
+                        },
+                        update: function() {
+                            
                         }
                     };
                     sprites[id] = obj;
-                    return obj;
+                    return $.extend(obj, proto);
                 }
             }
             return obj;

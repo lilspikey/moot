@@ -98,45 +98,46 @@
          .defineAnimation('guy-right-stand', { frames: 101 })
          .defineAnimation('guy-left-stand', { frames: 101 });;
     var layer = world.layer('foreground');
-    var sprite = world.sprite('guy');
+    var sprite = world.sprite('guy', {
+        dir: { dx:0, dy: 0 },
+        current_animation: 'guy-right-stand',
+        update: function() {
+            this.x(this.x()+this.dir.dx);
+            this.y(this.y()+this.dir.dy);
+        },
+        update_animation: function() {
+            var new_animation = this.current_animation;
+            var dir = this.dir;
+            if ( dir.dx || dir.dy ) {
+                if ( dir.dx == -1 ) {
+                    new_animation = 'guy-left-walk';
+                }
+                else if ( dir.dx == 1 ){
+                    new_animation = 'guy-right-walk';
+                }
+                else {
+                    new_animation = this.current_animation.replace(/stand/, 'walk');
+                }
+            }
+            else {
+                new_animation = this.current_animation.replace(/walk/, 'stand');
+            }
+            if ( this.current_animation != new_animation ) {
+                this.animation('main', new_animation);
+                this.current_animation = new_animation;
+            }
+        }
+    });
     sprite.animation('main', 'guy-right-stand');
     layer.add(sprite);
     
     // re-enable to test animations
     //world.listAnimations();
     
-    var dir = {dx:0, dy:0};
-    var pos = {x:0, y:0};
-    
     setInterval(function() {
         world.animate();
-        pos.x += dir.dx;
-        pos.y += dir.dy;
-        sprite.x(pos.x).y(pos.y);
+        world.update();
     }, 100);
-    
-    var animation = 'guy-right-stand';
-    var update_animation = function() {
-        var new_animation = animation;
-        if ( dir.dx || dir.dy ) {
-            if ( dir.dx == -1 ) {
-                new_animation = 'guy-left-walk';
-            }
-            else if ( dir.dx == 1 ){
-                new_animation = 'guy-right-walk';
-            }
-            else {
-                new_animation = animation.replace(/stand/, 'walk');
-            }
-        }
-        else {
-            new_animation = animation.replace(/walk/, 'stand');
-        }
-        if ( animation != new_animation ) {
-            sprite.animation('main', new_animation);
-            animation = new_animation;
-        }
-    };
     
     $(document).bind('keydown', function(event) {
         if ( !(37 <= event.keyCode && event.keyCode <= 40) ) {
@@ -144,24 +145,24 @@
         }
         event.preventDefault();
         switch(event.keyCode) {
-            case 38: dir.dy = -1; break;
-            case 40: dir.dy =  1; break;
-            case 37: dir.dx = -1; break;
-            case 39: dir.dx =  1; break;
+            case 38: sprite.dir.dy = -1; break;
+            case 40: sprite.dir.dy =  1; break;
+            case 37: sprite.dir.dx = -1; break;
+            case 39: sprite.dir.dx =  1; break;
         }
-        update_animation();
+        sprite.update_animation();
     }).bind('keyup', function(event) {
         if ( !(37 <= event.keyCode && event.keyCode <= 40) ) {
             return;
         }
         event.preventDefault();
         switch(event.keyCode) {
-            case 38: dir.dy = 0; break;
-            case 40: dir.dy = 0; break;
-            case 37: dir.dx = 0; break;
-            case 39: dir.dx = 0; break;
+            case 38: sprite.dir.dy = 0; break;
+            case 40: sprite.dir.dy = 0; break;
+            case 37: sprite.dir.dx = 0; break;
+            case 39: sprite.dir.dx = 0; break;
         }
-        update_animation();
+        sprite.update_animation();
     });
     </script>
 </body>
