@@ -128,8 +128,16 @@
             }
         }
     });
-    sprite.animation('main', 'guy-right-stand');
+    sprite.animation('main', 'guy-right-stand').width(32).height(32);
     layer.add(sprite);
+    
+    var other = world.sprite('other', {});
+    other.animation('main', 'guy-right-stand').x(35).y(5).width(32).height(32);
+    layer.add(other);
+    
+    world.collision('', '', function(sprite1, sprite2) {
+        console.log('colliding');
+    });
     
     // re-enable to test animations
     //world.listAnimations();
@@ -137,6 +145,7 @@
     setInterval(function() {
         world.animate();
         world.update();
+        world.checkCollisions();
     }, 100);
     
     $(document).bind('keydown', function(event) {

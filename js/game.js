@@ -5,6 +5,37 @@ var GameJS = (function($) {
             var layers = {};
             var animations = {};
             var sprites = {};
+            var collision_handlers = {};
+            
+            var register_collision_handler = function(type1, type2, handler) {
+                if ( collision_handlers[type1] === undefined ) {
+                    collision_handlers[type1] = {};
+                }
+                collision_handlers[type1][type2] = handler;
+            };
+            
+            var handle_collision = function(sprite1, sprite2) {
+                var type1 = sprite1.type(),
+                    type2 = sprite2.type();
+                if ( collision_handlers[type1] !== undefined ) {
+                    handler = collision_handlers[type1][type2];
+                    if ( handler !== undefined ) {
+                        handler(sprite1, sprite2);
+                    }
+                }
+            };
+            
+            var colliding = function(sprite1, sprite2) {
+                var x1 = sprite1.x(), y1 = sprite1.y(),
+                    w1 = sprite1.width(), h1 = sprite1.height(),
+                    x2 = sprite2.x(), y2 = sprite2.y(),
+                    w2 = sprite2.width(), h2 = sprite2.height();
+                
+                return !(x2 > (x1+w1) ||
+                         (x2+w2) < x1 ||
+                         y2 > (y1+h1) ||
+                         (y2+h2) < y1);
+            };
             
             var obj = {
                 layer: function(id) {
@@ -49,6 +80,16 @@ var GameJS = (function($) {
                     world_element.after(list)
                 },
                 
+                collision: function(type1, type2, handler) {
+                    // TODO maybe allow space separated types? so
+                    // can easily register same behaviour for
+                    // multiple types at once
+                    
+                    // register handler and it's inverse
+                    register_collision_handler(type1, type2, handler);
+                    register_collision_handler(type2, type1, function(a,b) { handler(b,a) });
+                },
+                
                 animate: function() {
                     for ( var id in sprites ) {
                         sprites[id].animate();
@@ -58,6 +99,26 @@ var GameJS = (function($) {
                 update: function() {
                     for ( var id in sprites ) {
                         sprites[id].update();
+                    }
+                },
+                
+                checkCollisions: function() {
+                    // TODO use quadtree or something
+                    // so we're not doing N*N checks
+                    var sprite_arr = [];
+                    for ( var id in sprites ) {
+                        sprite_arr.push(sprites[id]);
+                    }
+                    
+                    var len = sprite_arr.length;
+                    for ( var i = 0; i < len; i++ ) {
+                        var spritei = sprite_arr[i];
+                        for ( var j = i+1; j < len; j++ ) {
+                            var spritej = sprite_arr[j];
+                            if ( colliding(spritei, spritej) ) {
+                                handle_collision(spritei, spritej);
+                            }
+                        }
                     }
                 },
                 
@@ -145,6 +206,9 @@ var GameJS = (function($) {
                         },
                         update: function() {
                             
+                        },
+                        type: function() {
+                            return '';
                         }
                     };
                     sprites[id] = obj;
