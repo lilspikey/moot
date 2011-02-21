@@ -136,7 +136,44 @@
     layer.add(other);
     
     world.collision('', '', function(sprite1, sprite2) {
-        console.log('colliding');
+        var w1 = sprite1.width()/2,
+            w2 = sprite2.width()/2,
+            h1 = sprite1.height()/2,
+            h2 = sprite2.height()/2;
+        var cx1 = sprite1.x() + w1,
+            cx2 = sprite2.x() + w2,
+            cy1 = sprite1.y() + h1,
+            cy2 = sprite2.y() + h2;
+        
+        var dx = Math.abs(cx1-cx2),
+            dy = Math.abs(cy1-cy2);
+        
+        // move the sprites apart
+        if ( dx <= (w1+w2) && dx > dy ) {
+            var x1 = sprite1.x();
+            var x2 = sprite2.x();
+            if ( cx1 < cx2 ) {
+                sprite1.x(x1 - 1);
+                sprite2.x(x2 + 1);
+            }
+            else {
+                sprite1.x(x1 + 1);
+                sprite2.x(x2 - 1);
+            }
+        }
+        else if ( dy <= (h1+h2) ) {
+            var y1 = sprite1.y();
+            var y2 = sprite2.y();
+            if ( cy1 < cy2 ) {
+                sprite1.y(y1 - 1);
+                sprite2.y(y2 + 1);
+            }
+            else {
+                sprite1.y(y1 + 1);
+                sprite2.y(y2 - 1);
+            }
+        }
+
     });
     
     // re-enable to test animations
