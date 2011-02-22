@@ -30,6 +30,7 @@
     
     #game .layer .sprite {
         position: absolute;
+        /*border: 1px solid red;*/
     }
     
     .debug-animations .sprite {
@@ -46,6 +47,8 @@
     .sprite span.guy-right-walk,
     .sprite span.guy-left-stand,
     .sprite span.guy-left-walk {
+        top: -4px;
+        left: -8px;
         width: 32px;
         height: 32px;
         background-image: url(img/guy.png);
@@ -83,6 +86,13 @@
     .sprite span.guy-left-walk.frame-3 {
         background-position: 0 -64px;
     }
+    .sprite span.block {
+        width: 32px;
+        height: 32px;
+        background-image: url(img/block.png);
+        background-repeat: no-repeat;
+        background-position: 0 0;
+    }
   </style>
 </head>
 <body>
@@ -96,11 +106,15 @@
     world.defineAnimation('guy-right-walk', { frames: 4 })
          .defineAnimation('guy-left-walk', { frames: 4 })
          .defineAnimation('guy-right-stand', { frames: 101 })
-         .defineAnimation('guy-left-stand', { frames: 101 });;
+         .defineAnimation('guy-left-stand', { frames: 101 })
+         .defineAnimation('block', { frames: 1 });
     var layer = world.layer('foreground');
     var sprite = world.sprite('guy', {
         dir: { dx:0, dy: 0 },
         current_animation: 'guy-right-stand',
+        type: function() {
+            return 'guy';
+        },
         update: function() {
             this.x(this.x()+this.dir.dx);
             this.y(this.y()+this.dir.dy);
@@ -128,14 +142,18 @@
             }
         }
     });
-    sprite.animation('main', 'guy-right-stand').width(32).height(32);
+    sprite.animation('main', 'guy-right-stand').width(16).height(24);
     layer.add(sprite);
     
-    var other = world.sprite('other', {});
-    other.animation('main', 'guy-right-stand').x(35).y(5).width(32).height(32);
-    layer.add(other);
+    var block = world.sprite('block', {
+        type: function() {
+            return 'block';
+        },
+    });
+    block.animation('main', 'block').x(35).y(5).width(32).height(32);
+    layer.add(block);
     
-    world.collision('', '', function(sprite1, sprite2) {
+    world.collision('guy', 'block', function(sprite1, sprite2) {
         var w1 = sprite1.width()/2,
             w2 = sprite2.width()/2,
             h1 = sprite1.height()/2,
