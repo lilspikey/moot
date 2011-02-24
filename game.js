@@ -15,12 +15,16 @@ var GameJS = (function($) {
             };
             
             var handle_collision = function(sprite1, sprite2) {
-                var type1 = sprite1.type(),
-                    type2 = sprite2.type();
-                if ( collision_handlers[type1] !== undefined ) {
-                    handler = collision_handlers[type1][type2];
-                    if ( handler !== undefined ) {
-                        handler(sprite1, sprite2);
+                var types1 = sprite1.types(),
+                    types2 = sprite2.types();
+                for ( var type1 in types1 ) {
+                    for ( var type2 in types2 ) {
+                        if ( collision_handlers[type1] !== undefined ) {
+                            handler = collision_handlers[type1][type2];
+                            if ( handler !== undefined ) {
+                                handler(sprite1, sprite2);
+                            }
+                        }
                     }
                 }
             };
@@ -48,7 +52,10 @@ var GameJS = (function($) {
                     
                     var obj ={
                         add: function(sprite) {
-                            l.append(sprite._elem);
+                            l.append(sprite.elem());
+                        },
+                        elem: function() {
+                            return l;
                         }
                     };
                     layers[id] = obj;
@@ -70,7 +77,7 @@ var GameJS = (function($) {
                         var dd = $('<dd></dd>');
                         var sprite = obj.sprite('debug-'+name);
                         sprite.animation(name);
-                        dd.append(sprite._elem);
+                        dd.append(sprite.elem());
                         list.append($('<dt></dt>').text(name)).append(dd);
                         
                         (function(sprite) {
@@ -133,12 +140,14 @@ var GameJS = (function($) {
                     
                     var s = $('<div class="sprite"></div>').attr({id: id});
                     var _animations = {};
-                    var _obj = {x:0, y:0, width:0, height:0};
+                    var _obj = {x:0, y:0, width:0, height:0, types: {}};
                     
                     var obj = {
-                        _elem: s,
                         id: function() {
                             return id;
+                        },
+                        elem: function() {
+                            return s;
                         },
                         x: function(x) {
                             if (x !== undefined) {
@@ -207,8 +216,18 @@ var GameJS = (function($) {
                         update: function() {
                             
                         },
-                        type: function() {
-                            return '';
+                        types: function() {
+                            return _obj.types;
+                        },
+                        addType: function(type) {
+                            _obj.types[type]=true;
+                            s.addClass(type);
+                            return obj;
+                        },
+                        removeType: function(type) {
+                            delete _obj.types[type];
+                            s.removeClass(type);
+                            return obj;
                         }
                     };
                     sprites[id] = obj;

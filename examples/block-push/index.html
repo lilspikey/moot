@@ -112,9 +112,6 @@
     var sprite = world.sprite('guy', {
         dir: { dx:0, dy: 0 },
         current_animation: 'guy-right-stand',
-        type: function() {
-            return 'guy';
-        },
         update: function() {
             this.x(this.x()+this.dir.dx);
             this.y(this.y()+this.dir.dy);
@@ -143,13 +140,10 @@
         }
     });
     sprite.animation('main', 'guy-right-stand').width(16).height(24);
+    sprite.addType('guy')
     layer.add(sprite);
     
-    var block = world.sprite('block', {
-        type: function() {
-            return 'block';
-        },
-    });
+    var block = world.sprite('block').addType('block');
     block.animation('main', 'block').x(35).y(5).width(32).height(32);
     layer.add(block);
     
