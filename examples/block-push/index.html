@@ -120,10 +120,10 @@
             var new_animation = this.current_animation;
             var dir = this.dir;
             if ( dir.dx || dir.dy ) {
-                if ( dir.dx == -1 ) {
+                if ( dir.dx < 0 ) {
                     new_animation = 'guy-left-walk';
                 }
-                else if ( dir.dx == 1 ){
+                else if ( dir.dx > 0 ){
                     new_animation = 'guy-right-walk';
                 }
                 else {
@@ -162,27 +162,29 @@
         
         // move the sprites apart
         if ( dx <= (w1+w2) && dx > dy ) {
+            var d = 0.5*(w1+w2 - dx);
             var x1 = sprite1.x();
             var x2 = sprite2.x();
             if ( cx1 < cx2 ) {
-                sprite1.x(x1 - 1);
-                sprite2.x(x2 + 1);
+                sprite1.x(x1 - d);
+                sprite2.x(x2 + d);
             }
             else {
-                sprite1.x(x1 + 1);
-                sprite2.x(x2 - 1);
+                sprite1.x(x1 + d);
+                sprite2.x(x2 - d);
             }
         }
         else if ( dy <= (h1+h2) ) {
+            var d = 0.5*(h1+h2 - dy);
             var y1 = sprite1.y();
             var y2 = sprite2.y();
             if ( cy1 < cy2 ) {
-                sprite1.y(y1 - 1);
-                sprite2.y(y2 + 1);
+                sprite1.y(y1 - d);
+                sprite2.y(y2 + d);
             }
             else {
-                sprite1.y(y1 + 1);
-                sprite2.y(y2 - 1);
+                sprite1.y(y1 + d);
+                sprite2.y(y2 - d);
             }
         }
 
@@ -203,10 +205,10 @@
         }
         event.preventDefault();
         switch(event.keyCode) {
-            case 38: sprite.dir.dy = -1; break;
-            case 40: sprite.dir.dy =  1; break;
-            case 37: sprite.dir.dx = -1; break;
-            case 39: sprite.dir.dx =  1; break;
+            case 38: sprite.dir.dy = -4; break;
+            case 40: sprite.dir.dy =  4; break;
+            case 37: sprite.dir.dx = -4; break;
+            case 39: sprite.dir.dx =  4; break;
         }
         sprite.update_animation();
     }).bind('keyup', function(event) {
