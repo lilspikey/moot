@@ -111,8 +111,36 @@
     var layer = world.layer('foreground');
     var sprite = world.sprite('guy', {
         dir: { dx:0, dy: 0 },
+        target: { x: 0, y: 0 },
         current_animation: 'guy-right-stand',
+        move_to: function(x, y) {
+            // convert to nearest center of square
+            this.target.x = 32 * (Math.floor(x/32) + 0.5) - this.width()/2;
+            this.target.y = 32 * (Math.floor(y/32) + 0.5) - this.height()/2;
+            return sprite;
+        },
         update: function() {
+            var dx = Math.min(Math.abs(this.target.x - this.x()), 4),
+                dy = Math.min(Math.abs(this.target.y - this.y()), 4);
+            if ( this.target.x > this.x() ) {
+                this.dir.dx = dx;
+            }
+            else if ( this.target.x < this.x() ) {
+                this.dir.dx = -dx;
+            }
+            else {
+                this.dir.dx = 0;
+            }
+            if ( this.target.y > this.y() ) {
+                this.dir.dy = dy;
+            }
+            else if ( this.target.y < this.y() ) {
+                this.dir.dy = -dy;
+            }
+            else {
+                this.dir.dy = 0;
+            }
+            this.update_animation();
             this.x(this.x()+this.dir.dx);
             this.y(this.y()+this.dir.dy);
         },
@@ -139,7 +167,7 @@
             }
         }
     });
-    sprite.animation('main', 'guy-right-stand').width(16).height(24);
+    sprite.animation('main', 'guy-right-stand').width(16).height(24).move_to(16, 16);
     sprite.addType('guy')
     layer.add(sprite);
     
@@ -199,31 +227,17 @@
         world.checkCollisions();
     }, 100);
     
-    $(document).bind('keydown', function(event) {
-        if ( !(37 <= event.keyCode && event.keyCode <= 40) ) {
-            return;
-        }
+    
+    $('#game').bind('click', function(event) {
+        // might need to translate further for layer
+        // if we translate later
         event.preventDefault();
-        switch(event.keyCode) {
-            case 38: sprite.dir.dy = -4; break;
-            case 40: sprite.dir.dy =  4; break;
-            case 37: sprite.dir.dx = -4; break;
-            case 39: sprite.dir.dx =  4; break;
-        }
-        sprite.update_animation();
-    }).bind('keyup', function(event) {
-        if ( !(37 <= event.keyCode && event.keyCode <= 40) ) {
-            return;
-        }
-        event.preventDefault();
-        switch(event.keyCode) {
-            case 38: sprite.dir.dy = 0; break;
-            case 40: sprite.dir.dy = 0; break;
-            case 37: sprite.dir.dx = 0; break;
-            case 39: sprite.dir.dx = 0; break;
-        }
-        sprite.update_animation();
+        var offset = $(this).offset();
+        var x = event.pageX - offset.left;
+        var y = event.pageY - offset.top;
+        sprite.move_to(x, y);
     });
+    
     </script>
 </body>
 </html>
