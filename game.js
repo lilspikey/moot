@@ -141,6 +141,7 @@ var GameJS = (function($) {
                     var s = $('<div class="sprite"></div>').attr({id: id});
                     var _animations = {};
                     var _obj = {x:0, y:0, width:0, height:0, types: {}};
+                    var _hide_after_frames = -1;
                     
                     var obj = {
                         id: function() {
@@ -181,6 +182,20 @@ var GameJS = (function($) {
                             }
                             return _obj.height;
                         },
+                        hide: function() {
+                            obj.elem().hide();
+                            return obj;
+                        },
+                        show: function(num_frames) {
+                            obj.elem().show();
+                            if ( num_frames === undefined) {
+                                _hide_after_frames = -1;
+                            }
+                            else {
+                                _hide_after_frames = num_frames;
+                            }
+                            return obj;
+                        },
                         animation: function(name, animation) {
                             if ( animation === undefined ) {
                                 animation = name;
@@ -205,6 +220,12 @@ var GameJS = (function($) {
                             return obj;
                         },
                         animate: function() {
+                            if ( _hide_after_frames >= 0 ) {
+                                if ( _hide_after_frames === 0 ) {
+                                    obj.hide();
+                                }
+                                _hide_after_frames--;
+                            }
                             for ( var name in _animations ) {
                                 var a = _animations[name];
                                 var frame = a.frame;

@@ -93,6 +93,13 @@
         background-repeat: no-repeat;
         background-position: 0 0;
     }
+    .sprite span.click {
+        width: 32px;
+        height: 32px;
+        background-image: url(img/click.png);
+        background-repeat: no-repeat;
+        background-position: 0 0;
+    }
   </style>
 </head>
 <body>
@@ -107,16 +114,28 @@
          .defineAnimation('guy-left-walk', { frames: 4 })
          .defineAnimation('guy-right-stand', { frames: 101 })
          .defineAnimation('guy-left-stand', { frames: 101 })
-         .defineAnimation('block', { frames: 1 });
+         .defineAnimation('block', { frames: 1 })
+         .defineAnimation('click', { frames: 1 });
     var layer = world.layer('foreground');
+    
+    var click_marker = world.sprite('click').addType('click').width(32).height(32).hide();
+    click_marker.animation('click');
+    layer.add(click_marker);
+    
     var sprite = world.sprite('guy', {
         dir: { dx:0, dy: 0 },
         target: { x: 0, y: 0 },
         current_animation: 'guy-right-stand',
         move_to: function(x, y) {
             // convert to nearest center of square
-            this.target.x = 32 * (Math.floor(x/32) + 0.5) - this.width()/2;
-            this.target.y = 32 * (Math.floor(y/32) + 0.5) - this.height()/2;
+            x = 32 * (Math.floor(x/32) + 0.5);
+            y = 32 * (Math.floor(y/32) + 0.5);
+            
+            click_marker.x(x - (click_marker.width()/2)).y(y - (click_marker.height()/2)).show(3);
+            
+            this.target.x = x - this.width()/2;
+            this.target.y = y - this.height()/2;
+            
             return sprite;
         },
         update: function() {
@@ -174,6 +193,8 @@
     var block = world.sprite('block').addType('block');
     block.animation('main', 'block').x(35).y(5).width(32).height(32);
     layer.add(block);
+    
+    click_marker.hide();
     
     world.collision('guy', 'block', function(sprite1, sprite2) {
         var w1 = sprite1.width()/2,
