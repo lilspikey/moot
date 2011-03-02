@@ -190,9 +190,11 @@
     sprite.addType('guy')
     layer.add(sprite);
     
-    var block = world.sprite('block').addType('block');
-    block.animation('main', 'block').x(35).y(5).width(32).height(32);
-    layer.add(block);
+    for ( var i = 0; i < 100; i++ ) {
+        var block = world.sprite('block-'+i).addType('block');
+        block.animation('main', 'block').x(Math.random()*480).y(Math.random()*320).width(32).height(32);
+        layer.add(block);
+    }
     
     click_marker.hide();
     
