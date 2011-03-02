@@ -281,10 +281,12 @@ var GameJS = (function($) {
                             }
                             for ( var name in _animations ) {
                                 var a = _animations[name];
-                                var frame = a.frame;
-                                var next = (frame + 1) % animations[a.animation].frames;
-                                a.elem.removeClass('frame-'+frame).addClass('frame-'+next);
-                                a.frame = next;
+                                if ( animations[a.animation].frames > 1 ) { 
+                                    var frame = a.frame;
+                                    var next = (frame + 1) % animations[a.animation].frames;
+                                    a.elem.removeClass('frame-'+frame).addClass('frame-'+next);
+                                    a.frame = next;
+                                }
                             }
                         },
                         update: function() {
