@@ -41,6 +41,34 @@ var GameJS = (function($) {
                          (y2+h2) < y1);
             };
             
+            var sweep = function(intervals) {
+                intervals.sort(function(a,b) { return a.x - b.x; });
+                
+                var intersections = {};
+                var active = {};
+                for ( var i = 0; i < intervals.length; i++ ) {
+                    var interval = intervals[i];
+                    if ( interval.begin ) {
+                        for ( var active_id in active ) {
+                            var a = active_id,
+                                b = interval.id;
+                            if ( b < a ) {
+                                var t = b;
+                                b = a;
+                                a = t;
+                            }
+                            
+                            intersections[a+'-'+b] = {a:a, b:b};
+                        }
+                        active[interval.id] = 1;
+                    }
+                    else {
+                        delete active[interval.id];
+                    }
+                }
+                return intersections;
+            };
+            
             var obj = {
                 layer: function(id) {
                     if ( id in layers ) {
@@ -109,7 +137,7 @@ var GameJS = (function($) {
                     }
                 },
                 
-                checkCollisions: function() {
+                checkCollisionsBruteForce: function() {
                     // TODO use quadtree or something
                     // so we're not doing N*N checks
                     var sprite_arr = [];
@@ -125,6 +153,31 @@ var GameJS = (function($) {
                             if ( colliding(spritei, spritej) ) {
                                 handle_collision(spritei, spritej);
                             }
+                        }
+                    }
+                },
+                
+                checkCollisions: function() {
+                    // Sweep and Prune 
+                    // http://web.imrc.kist.re.kr/~jwkim/course/PBA2008/Sweep%20and%20Prune%20Algorithm.pdf
+                    var xintervals = [];
+                    var yintervals = [];
+                    
+                    for ( var id in sprites ) {
+                        var sprite = sprites[id];
+                        xintervals.push({ begin: true, id: id, x: sprite.x() });
+                        xintervals.push({ begin: false, id: id, x: (sprite.x() + sprite.width()) });
+                        yintervals.push({ begin: true, id: id, x: sprite.y() });
+                        yintervals.push({ begin: false, id: id, x: (sprite.y() + sprite.height()) });
+                    }
+                    
+                    var xintersections = sweep(xintervals);
+                    var yintersections = sweep(yintervals);
+                    
+                    for ( var key in xintersections ) {
+                        if ( key in yintersections ) {
+                            var intersection = xintersections[key];
+                            handle_collision(sprites[intersection.a], sprites[intersection.b]);
                         }
                     }
                 },
