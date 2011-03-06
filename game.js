@@ -90,8 +90,20 @@ var GameJS = (function($) {
                     return obj;
                 },
                 
-                defineAnimation: function(name, params) {
-                    animations[name] = params;
+                defineAnimation: function(name, options) {
+                    options = $.extend({ frames: 1 }, options);
+                    if (!options.animate) {
+                        options.animate = function(animation) {
+                            var frames = options.frames;
+                            if ( frames > 1 ) { 
+                                var frame = animation.frame;
+                                var next = (frame + 1) % frames;
+                                animation.elem.removeClass('frame-'+frame).addClass('frame-'+next);
+                                animation.frame = next;
+                            }
+                        }
+                    }
+                    animations[name] = options;
                     return obj;
                 },
                 
@@ -281,12 +293,7 @@ var GameJS = (function($) {
                             }
                             for ( var name in _animations ) {
                                 var a = _animations[name];
-                                if ( animations[a.animation].frames > 1 ) { 
-                                    var frame = a.frame;
-                                    var next = (frame + 1) % animations[a.animation].frames;
-                                    a.elem.removeClass('frame-'+frame).addClass('frame-'+next);
-                                    a.frame = next;
-                                }
+                                animations[a.animation].animate(a);
                             }
                         },
                         update: function() {
