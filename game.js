@@ -127,14 +127,20 @@ var GameJS = (function($) {
                     world_element.after(list)
                 },
                 
-                collision: function(type1, type2, handler) {
-                    // TODO maybe allow space separated types? so
-                    // can easily register same behaviour for
-                    // multiple types at once
-                    
+                collision: function(types1, types2, handler) {
                     // register handler and it's inverse
-                    register_collision_handler(type1, type2, handler);
-                    register_collision_handler(type2, type1, function(a,b) { handler(b,a) });
+                    types1 = types1.split(/\s+/);
+                    types2 = types2.split(/\s+/);
+                    for ( var i = 0; i < types1.length; i++ ) {
+                        var type1 = types1[i];
+                        for ( var j = 0; j < types2.length; j++ ) {
+                            var type2 = types2[j];
+                            register_collision_handler(type1, type2, handler);
+                            if ( type1 != type2 ) {
+                                register_collision_handler(type2, type1, function(a,b) { handler(b,a) });
+                            }
+                        }
+                    }
                 },
                 
                 animate: function() {
