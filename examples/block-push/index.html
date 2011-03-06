@@ -193,9 +193,11 @@
     sprite.addType('guy')
     layer.add(sprite);
     
-    for ( var i = 0; i < 100; i++ ) {
+    for ( var i = 0; i < 50; i++ ) {
         var block = world.sprite('block-'+i).addType('block');
-        block.animation('main', 'block').x(Math.random()*480).y(Math.random()*320).width(32).height(32);
+        var x = Math.round((Math.random()*480)/32) * 32,
+            y = Math.round((Math.random()*320)/32) * 32;
+        block.animation('main', 'block').x(x).y(y).width(32).height(32);
         layer.add(block);
     }
     
