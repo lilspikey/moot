@@ -93,9 +93,9 @@ var GameJS = (function($) {
                 defineAnimation: function(name, options) {
                     options = $.extend({ frames: 1 }, options);
                     if (!options.animate) {
-                        options.animate = function(animation) {
+                        options.animate = function(sprite, animation) {
                             var frames = options.frames;
-                            if ( frames > 1 ) { 
+                            if ( frames > 1 ) {
                                 var frame = animation.frame;
                                 var next = (frame + 1) % frames;
                                 animation.elem.removeClass('frame-'+frame).addClass('frame-'+next);
@@ -293,7 +293,7 @@ var GameJS = (function($) {
                             }
                             for ( var name in _animations ) {
                                 var a = _animations[name];
-                                animations[a.animation].animate(a);
+                                animations[a.animation].animate(this, a);
                             }
                         },
                         update: function() {
