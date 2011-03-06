@@ -117,8 +117,8 @@
          .defineAnimation('guy-left-walk', { frames: 4 })
          .defineAnimation('guy-right-stand', { frames: 101 })
          .defineAnimation('guy-left-stand', { frames: 101 })
-         .defineAnimation('block', { frames: 1 })
-         .defineAnimation('click', { frames: 1 });
+         .defineAnimation('block')
+         .defineAnimation('click');
     var layer = world.layer('foreground');
     
     var click_marker = world.sprite('click').addType('click').width(32).height(32).hide();
@@ -201,7 +201,7 @@
     
     click_marker.hide();
     
-    world.collision('guy', 'block', function(sprite1, sprite2) {
+    world.collision('guy block', 'block', function(sprite1, sprite2) {
         var w1 = sprite1.width()/2,
             w2 = sprite2.width()/2,
             h1 = sprite1.height()/2,
