@@ -1,10 +1,10 @@
 module("World");
 test("create world", function() {
-    var world = GameJS.world($('<div>'));
+    var world = Moot.world($('<div>'));
     ok(world !== undefined, "object returned for world");
 });
 test("world has expected methods", function() {
-    var world = GameJS.world($('<div>'));
+    var world = Moot.world($('<div>'));
     ok(world.layer !== undefined, "layer method present");
     ok(world.defineAnimation !== undefined, "defineAnimation method present");
     ok(world.listAnimations !== undefined, "listAnimations method present");
@@ -16,14 +16,14 @@ test("world has expected methods", function() {
 });
 test("world create layer", function() {
     var world_elem = $('<div>');
-    var world = GameJS.world(world_elem);
+    var world = Moot.world(world_elem);
     var layer = world.layer('main-layer');
     ok(layer !== undefined, "layer returned");
     same(world.layer('main-layer'), layer, "layer not re-created");
 });
 test("world create sprite", function() {
     var world_elem = $('<div>');
-    var world = GameJS.world(world_elem);
+    var world = Moot.world(world_elem);
     var sprite = world.sprite('main-sprite');
     ok(sprite !== undefined, "sprite returned");
     same(world.sprite('main-sprite'), sprite, "sprite not re-created");
@@ -32,14 +32,14 @@ test("world create sprite", function() {
 module("Layer")
 test("layer has expected methods", function() {
     var world_elem = $('<div>');
-    var world = GameJS.world(world_elem);
+    var world = Moot.world(world_elem);
     var layer = world.layer('main-layer');
     ok(layer.add !== undefined, "add method present");
     ok(layer.elem !== undefined, "add method present");
 });
 test("layer backed by div", function() {
     var world_elem = $('<div>');
-    var world = GameJS.world(world_elem);
+    var world = Moot.world(world_elem);
     var layer = world.layer('main-layer');
     var layer_elem = layer.elem();
     equals(layer_elem.attr('id'), 'main-layer', "correct layer id");
@@ -48,14 +48,14 @@ test("layer backed by div", function() {
 });
 test("layer div in world", function() {
     var world_elem = $('<div>');
-    var world = GameJS.world(world_elem);
+    var world = Moot.world(world_elem);
     var layer = world.layer('main-layer');
     equals(world_elem.find('#main-layer').size(), 1,
            "world element contains layer div");
 });
 test("layer add sprite", function() {
     var world_elem = $('<div>');
-    var world = GameJS.world(world_elem);
+    var world = Moot.world(world_elem);
     var layer = world.layer('main-layer');
     var sprite = world.sprite('main-sprite');
     
@@ -72,7 +72,7 @@ test("layer add sprite", function() {
 module("Sprite")
 test("sprite backed by div", function() {
     var world_elem = $('<div>');
-    var world = GameJS.world(world_elem);
+    var world = Moot.world(world_elem);
     var sprite = world.sprite('main-sprite');
     var sprite_elem = sprite.elem();
     equals(sprite_elem.attr('id'), 'main-sprite', "correct sprite id");

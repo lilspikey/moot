@@ -1,4 +1,4 @@
-var GameJS = (function($) {
+var Moot = (function($) {
     return {
         world: function(element) {
             var world_element = $(element);
