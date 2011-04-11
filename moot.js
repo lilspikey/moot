@@ -347,6 +347,7 @@ var Moot = (function($) {
                             return obj;
                         },
                         removeAnimation: function(name) {
+                            // TODO remove from group
                             if ( name in _animations ) {
                                 _animations[name].remove();
                                 delete _animations[name];
