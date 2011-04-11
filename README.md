@@ -14,11 +14,10 @@ As we are using the DOM for this game engine CSS is lent on heavily.  Therefore 
 Creating a single "block" and adding it the game:
 
     var world = Moot.world('#game');
-    world.defineAnimation('block-anim');
     var layer = world.layer('foreground');
     var block = world.sprite('block1').addType('block');
     block.x(5).y(10).width(32).height(32);
-    block.animation('main', 'block-anim')
+    block.animation('main', { cssClass: 'block-anim' })
     layer.add(block);
 
 Which would then (assuming a div with id "game") would yield this markup:
