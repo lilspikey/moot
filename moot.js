@@ -3,7 +3,6 @@ var Moot = (function($) {
         world: function(element) {
             var world_element = $(element);
             var layers = {};
-            var animations = {};
             var sprites = {};
             var collision_handlers = {};
             
@@ -90,7 +89,7 @@ var Moot = (function($) {
                     return obj;
                 },
                 
-                defineAnimation: function(name, options) {
+                /*defineAnimation: function(name, options) {
                     options = $.extend({ frames: 1 }, options);
                     if (!options.animate) {
                         options.animate = function(sprite, animation) {
@@ -105,9 +104,9 @@ var Moot = (function($) {
                     }
                     animations[name] = options;
                     return obj;
-                },
+                },*/
                 
-                listAnimations: function(fps) {
+                /*listAnimations: function(fps) {
                     if ( fps === undefined ) {
                         fps = 10;
                     }
@@ -125,7 +124,7 @@ var Moot = (function($) {
                         })(sprite);
                     }
                     world_element.after(list)
-                },
+                },*/
                 
                 collision: function(types1, types2, handler) {
                     // register handler and it's inverse
@@ -211,6 +210,7 @@ var Moot = (function($) {
                     
                     var s = $('<div class="sprite"></div>').attr({id: id});
                     var _animations = {};
+                    var _animation_groups = {};
                     var _obj = {x:0, y:0, width:0, height:0, types: {}};
                     var _hide_after_frames = -1;
                     
@@ -267,19 +267,82 @@ var Moot = (function($) {
                             }
                             return obj;
                         },
-                        animation: function(name, animation) {
-                            if ( animation === undefined ) {
-                                animation = name;
+                        /**
+                         * get/set an animation with the given name.
+                         * options is an object with properties
+                         *  cssClass - css class name for animation
+                         *  frames - number of frames for animation
+                         *  group - (optional) name of group of animations this belongs to (show hides other animation in group)
+                         **/
+                        animation: function(name, options) {
+                            if ( options === undefined ) {
+                                return _animations[name];
                             }
-                            if ( !(name in _animations) ) {
-                                var a = $('<span></span>');
-                                s.append(a);
-                                _animations[name] = { elem: a };
+                            
+                            var a = $('<span></span>');
+                            s.append(a);
+                            a.addClass(options.cssClass);
+                            
+                            var _group = null;
+                            if ( options.group ) {
+                                if ( !_animation_groups[options.group] ) {
+                                    _animation_groups[options.group] = [];
+                                }
+                                _group = _animation_groups[options.group];
                             }
-                            var a = _animations[name];
-                            a.elem.attr('class', animation);
-                            a.animation = animation;
-                            a.frame = 0;
+                            
+                            var _frame = 0,
+                                _frames = options.frames || 1,
+                                _playing = true;
+                            
+                            var animation = {
+                                elem: function() {
+                                    return a;
+                                },
+                                animate: function() {
+                                    if ( _playing ) {
+                                        this.frame(_frame+1);
+                                    }
+                                    return animation;
+                                },
+                                pause: function() {
+                                    _playing = false;
+                                    return animation;
+                                },
+                                play: function() {
+                                    _playing = true;
+                                    return animation;
+                                },
+                                hide: function() {
+                                    a.hide();
+                                    return animation;
+                                },
+                                show: function() {
+                                    a.show();
+                                    if ( _group ) {
+                                        for ( var i = 0; i < _group.length; i++ ) {
+                                            if ( _group[i] != this ) {
+                                                _group[i].hide();
+                                            }
+                                        }
+                                    }
+                                    return animation;
+                                },
+                                frame: function(frame) {
+                                    if ( frame === undefined ) {
+                                        return _frame;
+                                    }
+                                    frame = frame % _frames;
+                                    a.removeClass('frame-' + _frame).addClass('frame-' + frame);
+                                    _frame = frame;
+                                    return animation;
+                                }
+                            };
+                            
+                            _animations[name] = animation;
+                            if ( _group ) {
+                                _group.push(animation);
+                            }
                             
                             return obj;
                         },
@@ -298,8 +361,7 @@ var Moot = (function($) {
                                 _hide_after_frames--;
                             }
                             for ( var name in _animations ) {
-                                var a = _animations[name];
-                                animations[a.animation].animate(this, a);
+                                _animations[name].animate();
                             }
                         },
                         update: function() {

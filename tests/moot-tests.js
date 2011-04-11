@@ -6,8 +6,6 @@ test("create world", function() {
 test("world has expected methods", function() {
     var world = Moot.world($('<div>'));
     ok(world.layer !== undefined, "layer method present");
-    ok(world.defineAnimation !== undefined, "defineAnimation method present");
-    ok(world.listAnimations !== undefined, "listAnimations method present");
     ok(world.collision !== undefined, "collision method present");
     ok(world.animate !== undefined, "animate method present");
     ok(world.update !== undefined, "update method present");

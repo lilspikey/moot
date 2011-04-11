@@ -113,16 +113,10 @@
     <script type="text/javascript" src="../../moot.js"></script>
     <script type="text/javascript">
     var world = Moot.world('#game');
-    world.defineAnimation('guy-right-walk', { frames: 4 })
-         .defineAnimation('guy-left-walk', { frames: 4 })
-         .defineAnimation('guy-right-stand', { frames: 101 })
-         .defineAnimation('guy-left-stand', { frames: 101 })
-         .defineAnimation('block')
-         .defineAnimation('click');
     var layer = world.layer('foreground');
     
     var click_marker = world.sprite('click').addType('click').width(32).height(32).hide();
-    click_marker.animation('click');
+    click_marker.animation('click', { cssClass: 'click' });
     layer.add(click_marker);
     
     var sprite = world.sprite('guy', {
@@ -171,10 +165,10 @@
             var dir = this.dir;
             if ( dir.dx || dir.dy ) {
                 if ( dir.dx < 0 ) {
-                    new_animation = 'guy-left-walk';
+                    new_animation = 'left-walk';
                 }
                 else if ( dir.dx > 0 ){
-                    new_animation = 'guy-right-walk';
+                    new_animation = 'right-walk';
                 }
                 else {
                     new_animation = this.current_animation.replace(/stand/, 'walk');
@@ -184,20 +178,26 @@
                 new_animation = this.current_animation.replace(/walk/, 'stand');
             }
             if ( this.current_animation != new_animation ) {
-                this.animation('main', new_animation);
+                this.animation(new_animation).show();
                 this.current_animation = new_animation;
             }
         }
     });
-    sprite.animation('main', 'guy-right-stand').width(16).height(24).move_to(16, 16);
+    
+    sprite.animation('right-walk', { cssClass: 'guy-right-walk', frames: 4, group: 'main'})
+          .animation('left-walk', { cssClass: 'guy-left-walk', frames: 4, group: 'main'})
+         .animation('right-stand', { cssClass: 'guy-right-stand', frames: 101, group: 'main' })
+         .animation('left-stand', { cssClass: 'guy-left-stand', frames: 101, group: 'main' })
+         .width(16).height(24).move_to(16, 16);
     sprite.addType('guy')
+    sprite.animation('right-stand').show();
     layer.add(sprite);
     
     for ( var i = 0; i < 50; i++ ) {
         var block = world.sprite('block-'+i).addType('block');
         var x = Math.round((Math.random()*480)/32) * 32,
             y = Math.round((Math.random()*320)/32) * 32;
-        block.animation('main', 'block').x(x).y(y).width(32).height(32);
+        block.animation('block', { cssClass: 'block' }).x(x).y(y).width(32).height(32);
         layer.add(block);
     }
     
