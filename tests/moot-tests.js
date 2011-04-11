@@ -77,4 +77,56 @@ test("sprite backed by div", function() {
     ok(sprite_elem.hasClass('sprite'), "correct sprite class");
     ok(sprite_elem.get(0).nodeName.toLowerCase(), "div", "sprite is div");
 });
+test("animation backed by span inside sprite div", function() {
+    var world_elem = $('<div>');
+    var world = Moot.world(world_elem);
+    var sprite = world.sprite('main-sprite');
+    equals(sprite, sprite.animation('animation', { cssClass: 'animation-class', frames: 2 }));
+    
+    var animation_elem = sprite.animation('animation').elem();
+    ok(animation_elem.hasClass('animation-class'), 'animation has right class');
+    ok(animation_elem.get(0).nodeName.toLowerCase(), "span", "animation is div");
+    
+    var sprite_elem = sprite.elem();
+    equals(sprite_elem.find('span.animation-class').get(0), animation_elem.get(0), 'sprite div contains animation span');
+});
 
+module("Animation")
+test("frame updates class", function() {
+    var world_elem = $('<div>');
+    var world = Moot.world(world_elem);
+    var sprite = world.sprite('main-sprite');
+    equals(sprite, sprite.animation('animation', { cssClass: 'animation-class', frames: 2 }));
+    
+    var animation = sprite.animation('animation');
+    animation.frame(0);
+    equals(0, animation.frame());
+    ok(animation.elem().hasClass('frame-0'), "has frame-0 class");
+    
+    animation.frame(1);
+    equals(1, animation.frame());
+    ok(animation.elem().hasClass('frame-1'), "has frame-1 class");
+    ok(!animation.elem().hasClass('frame-0'), "no longer has frame-0 class");
+});
+test("animate, pause and play", function() {
+    var world_elem = $('<div>');
+    var world = Moot.world(world_elem);
+    var sprite = world.sprite('main-sprite');
+    equals(sprite, sprite.animation('animation', { cssClass: 'animation-class', frames: 2 }));
+    
+    var animation = sprite.animation('animation');
+    animation.frame(0);
+    equals(0, animation.frame());
+    animation.animate();
+    equals(1, animation.frame());
+    animation.animate();
+    equals(0, animation.frame());
+    
+    animation.pause();
+    animation.animate();
+    equals(0, animation.frame());
+    
+    animation.play();
+    animation.animate();
+    equals(1, animation.frame());
+});
