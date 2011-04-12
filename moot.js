@@ -1,4 +1,110 @@
 var Moot = (function($) {
+    
+    var _simple_animation = function(sprite, options) {
+        var a = $('<span></span>');
+        sprite.elem().append(a);
+        a.addClass(options.cssClass);
+    
+        var _frame = 0,
+            _frames = options.frames || 1,
+            _playing = true;
+    
+        var animation = {
+            elem: function() {
+                return a;
+            },
+            animate: function() {
+                if ( _playing ) {
+                    this.frame(_frame+1);
+                }
+                return animation;
+            },
+            pause: function() {
+                _playing = false;
+                return animation;
+            },
+            play: function() {
+                _playing = true;
+                return animation;
+            },
+            hide: function() {
+                a.hide();
+                return animation;
+            },
+            show: function() {
+                a.show();
+                return animation;
+            },
+            frame: function(frame) {
+                if ( frame === undefined ) {
+                    return _frame;
+                }
+                frame = frame % _frames;
+                a.removeClass('frame-' + _frame).addClass('frame-' + frame);
+                _frame = frame;
+                return animation;
+            }
+        };
+        
+        return animation;
+    };
+    
+    var _group_animation = function(animations, options) {
+        var group = $.extend(true, [], options);
+        
+        var animation = {
+            group: group,
+            elem: function() {
+                return null;
+            },
+            animate: function() {
+                return animation;
+            },
+            pause: function() {
+                for ( var i = 0; i < group.length; i++ ) {
+                    animations[group[i]].pause();
+                }
+                return animation;
+            },
+            play: function() {
+                for ( var i = 0; i < group.length; i++ ) {
+                    animations[group[i]].play();
+                }
+                return animation;
+            },
+            hide: function() {
+                for ( var i = 0; i < group.length; i++ ) {
+                    animations[group[i]].hide();
+                }
+                return animation;
+            },
+            show: function(name) {
+                for ( var i = 0; i < group.length; i++ ) {
+                    var namei = group[i];
+                    if ( name === undefined || name == namei ) {
+                        animations[namei].show();
+                    }
+                    else {
+                        animations[namei].hide();
+                    }
+                }
+                return animation;
+            },
+            frame: function(frame) {
+                if ( frame === undefined ) {
+                    return;
+                }
+                for ( var i = 0; i < group.length; i++ ) {
+                    group[i].frame(frame);
+                }
+                return animation;
+            }
+        };
+        
+        return animation;
+    };
+    
+    
     return {
         world: function(element) {
             var world_element = $(element);
@@ -279,70 +385,16 @@ var Moot = (function($) {
                                 return _animations[name];
                             }
                             
-                            var a = $('<span></span>');
-                            s.append(a);
-                            a.addClass(options.cssClass);
+                            var animation;
                             
-                            var _group = null;
-                            if ( options.group ) {
-                                if ( !_animation_groups[options.group] ) {
-                                    _animation_groups[options.group] = [];
-                                }
-                                _group = _animation_groups[options.group];
+                            if ( !$.isArray(options) ) {
+                                animation = _simple_animation(this, options);
                             }
-                            
-                            var _frame = 0,
-                                _frames = options.frames || 1,
-                                _playing = true;
-                            
-                            var animation = {
-                                elem: function() {
-                                    return a;
-                                },
-                                animate: function() {
-                                    if ( _playing ) {
-                                        this.frame(_frame+1);
-                                    }
-                                    return animation;
-                                },
-                                pause: function() {
-                                    _playing = false;
-                                    return animation;
-                                },
-                                play: function() {
-                                    _playing = true;
-                                    return animation;
-                                },
-                                hide: function() {
-                                    a.hide();
-                                    return animation;
-                                },
-                                show: function() {
-                                    a.show();
-                                    if ( _group ) {
-                                        for ( var i = 0; i < _group.length; i++ ) {
-                                            if ( _group[i] != this ) {
-                                                _group[i].hide();
-                                            }
-                                        }
-                                    }
-                                    return animation;
-                                },
-                                frame: function(frame) {
-                                    if ( frame === undefined ) {
-                                        return _frame;
-                                    }
-                                    frame = frame % _frames;
-                                    a.removeClass('frame-' + _frame).addClass('frame-' + frame);
-                                    _frame = frame;
-                                    return animation;
-                                }
-                            };
+                            else {
+                                animation = _group_animation(_animations, options)
+                            }
                             
                             _animations[name] = animation;
-                            if ( _group ) {
-                                _group.push(animation);
-                            }
                             
                             return obj;
                         },

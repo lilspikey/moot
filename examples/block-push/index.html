@@ -178,17 +178,18 @@
                 new_animation = this.current_animation.replace(/walk/, 'stand');
             }
             if ( this.current_animation != new_animation ) {
-                this.animation(new_animation).show();
+                this.animation('main').show(new_animation);
                 this.current_animation = new_animation;
             }
         }
     });
     
-    sprite.animation('right-walk', { cssClass: 'guy-right-walk', frames: 4, group: 'main'})
-          .animation('left-walk', { cssClass: 'guy-left-walk', frames: 4, group: 'main'})
-         .animation('right-stand', { cssClass: 'guy-right-stand', frames: 101, group: 'main' })
-         .animation('left-stand', { cssClass: 'guy-left-stand', frames: 101, group: 'main' })
-         .width(16).height(24).move_to(16, 16);
+    sprite.animation('right-walk', { cssClass: 'guy-right-walk', frames: 4})
+          .animation('left-walk', { cssClass: 'guy-left-walk', frames: 4})
+          .animation('right-stand', { cssClass: 'guy-right-stand', frames: 101 })
+          .animation('left-stand', { cssClass: 'guy-left-stand', frames: 101 })
+          .animation('main', ['right-walk', 'left-walk', 'right-stand', 'left-stand'])
+          .width(16).height(24).move_to(16, 16);
     sprite.addType('guy')
     sprite.animation('right-stand').show();
     layer.add(sprite);
