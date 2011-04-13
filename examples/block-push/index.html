@@ -125,8 +125,8 @@
         current_animation: 'guy-right-stand',
         move_to: function(x, y) {
             // convert to nearest center of square
-            x = 32 * (Math.floor(x/32) + 0.5);
-            y = 32 * (Math.floor(y/32) + 0.5);
+            x = 32 * (Math.floor(x/32.0) + 0.5);
+            y = 32 * (Math.floor(y/32.0) + 0.5);
             
             click_marker.x(x - (click_marker.width()/2)).y(y - (click_marker.height()/2)).show(3);
             
@@ -138,6 +138,8 @@
         update: function() {
             var dx = Math.min(Math.abs(this.target.x - this.x()), 4),
                 dy = Math.min(Math.abs(this.target.y - this.y()), 4);
+                dx = Math.round(dx);
+                dy = Math.round(dy);
             if ( this.target.x > this.x() ) {
                 this.dir.dx = dx;
             }
@@ -191,11 +193,25 @@
           .animation('main', ['right-walk', 'left-walk', 'right-stand', 'left-stand'])
           .width(16).height(24).move_to(16, 16);
     sprite.addType('guy')
-    sprite.animation('right-stand').show();
+    sprite.animation('main').show('right-stand');
     layer.add(sprite);
     
     for ( var i = 0; i < 50; i++ ) {
-        var block = world.sprite('block-'+i).addType('block');
+        var block = world.sprite('block-'+i, {
+            update: function() {
+                var x = this.x(),
+                    y = this.y();
+                var cx = 32*Math.round(x/32.0);
+                var cy = 32*Math.round(y/32.0);
+                var d = 0.25;
+                if ( Math.abs(x - cx) <= 10 ) {
+                    this.x(d*cx + (1-d)*x);
+                }
+                if ( Math.abs(y - cy) <= 10 ) {
+                    this.y(d*cy + (1-d)*y);
+                }
+            }
+        }).addType('block');
         var x = Math.round((Math.random()*480)/32) * 32,
             y = Math.round((Math.random()*320)/32) * 32;
         block.animation('block', { cssClass: 'block' }).x(x).y(y).width(32).height(32);
