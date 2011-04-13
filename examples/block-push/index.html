@@ -119,7 +119,34 @@
     click_marker.animation('click', { cssClass: 'click' });
     layer.add(click_marker);
     
-    var sprite = world.sprite('guy', {
+    var next_pos = {
+        next_pos: function(x, y) {
+            if ( this._next === undefined ) {
+                this._next = [];
+            }
+            this._next.push({x:x,y:y});
+        },
+        update_next_pos: function() {
+            if ( this._next !== undefined ) {
+                if ( this._next.length > 0 ) {
+                    var x = 0, y = 0;
+                    for ( var i = 0; i < this._next.length; i++ ) {
+                        var p = this._next[i];
+                        x += p.x;
+                        y += p.y;
+                    }
+                    x /= this._next.length;
+                    y /= this._next.length;
+                    this.x(x);
+                    this.y(y);
+                    
+                    this._next.length = 0;
+                }
+            }
+        }
+    };
+    
+    var sprite = world.sprite('guy', $.extend({}, next_pos, {
         dir: { dx:0, dy: 0 },
         target: { x: 0, y: 0 },
         current_animation: 'guy-right-stand',
@@ -159,8 +186,11 @@
                 this.dir.dy = 0;
             }
             this.update_animation();
-            this.x(this.x()+this.dir.dx);
-            this.y(this.y()+this.dir.dy);
+            var x = this.x()+this.dir.dx;
+            var y = this.y()+this.dir.dy;
+            
+            this.next_pos(x, y);
+            this.update_next_pos()
         },
         update_animation: function() {
             var new_animation = this.current_animation;
@@ -184,7 +214,7 @@
                 this.current_animation = new_animation;
             }
         }
-    });
+    }));
     
     sprite.animation('right-walk', { cssClass: 'guy-right-walk', frames: 4})
           .animation('left-walk', { cssClass: 'guy-left-walk', frames: 4})
@@ -197,7 +227,7 @@
     layer.add(sprite);
     
     for ( var i = 0; i < 50; i++ ) {
-        var block = world.sprite('block-'+i, {
+        var block = world.sprite('block-'+i, $.extend({}, next_pos, {
             update: function() {
                 var x = this.x(),
                     y = this.y();
@@ -205,13 +235,15 @@
                 var cy = 32*Math.round(y/32.0);
                 var d = 0.25;
                 if ( Math.abs(x - cx) <= 10 ) {
-                    this.x(d*cx + (1-d)*x);
+                    x = d*cx + (1-d)*x;
                 }
                 if ( Math.abs(y - cy) <= 10 ) {
-                    this.y(d*cy + (1-d)*y);
+                    y = d*cy + (1-d)*y;
                 }
+                this.next_pos(x, y);
+                this.update_next_pos()
             }
-        }).addType('block');
+        })).addType('block');
         var x = Math.round((Math.random()*480)/32) * 32,
             y = Math.round((Math.random()*320)/32) * 32;
         block.animation('block', { cssClass: 'block' }).x(x).y(y).width(32).height(32);
@@ -239,12 +271,12 @@
             var x1 = sprite1.x();
             var x2 = sprite2.x();
             if ( cx1 < cx2 ) {
-                sprite1.x(x1 - d);
-                sprite2.x(x2 + d);
+                sprite1.next_pos(x1 - d, sprite1.y())
+                sprite2.next_pos(x2 + d, sprite2.y())
             }
             else {
-                sprite1.x(x1 + d);
-                sprite2.x(x2 - d);
+                sprite1.next_pos(x1 + d, sprite1.y())
+                sprite2.next_pos(x2 - d, sprite2.y())
             }
         }
         else if ( dy <= (h1+h2) ) {
@@ -252,12 +284,12 @@
             var y1 = sprite1.y();
             var y2 = sprite2.y();
             if ( cy1 < cy2 ) {
-                sprite1.y(y1 - d);
-                sprite2.y(y2 + d);
+                sprite1.next_pos(sprite1.x(), y1 - d)
+                sprite2.next_pos(sprite2.x(), y2 + d)
             }
             else {
-                sprite1.y(y1 + d);
-                sprite2.y(y2 - d);
+                sprite1.next_pos(sprite1.x(), y1 + d)
+                sprite2.next_pos(sprite2.x(), y2 - d)
             }
         }
 
