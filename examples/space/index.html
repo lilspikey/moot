@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>space</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" >
+  <meta name="viewport" content="width=480; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <style type="text/css">
+    body {
+        background: #000;
+        padding: 0;
+        margin: 0;
+    }
+    #game {
+        width: 480px;
+        height: 320px;
+        margin: 0 auto;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    #game .layer {
+        min-width: 100%;
+        min-height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    
+    #game #background {
+        background: url(img/stars-back.png);
+    }
+    
+    #game #middleground {
+        background: url(img/stars-mid.png);
+    }
+    
+    #game #foreground {
+        background: url(img/stars-near.png);
+    }
+    
+    #game .layer .sprite {
+        position: absolute;
+    }
+    
+    .sprite span {
+        position: absolute;
+    }
+  </style>
+</head>
+<body>
+    <div id="game">
+        
+    </div>
+    <script type="text/javascript" src="../js/jquery-1.5.min.js"></script>
+    <script type="text/javascript" src="../../moot.js"></script>
+    <script type="text/javascript">
+    var world = Moot.world('#game');
+    var update_position_fn = function(height, speed) {
+        return function() {
+            if ( this._y == undefined ) {
+                this._y = 0;
+            }
+            else {
+                this._y = (this._y + speed) % height;
+            }
+            this.elem().css('background-position', '0 ' + this._y + 'px');
+        }
+    };
+    var background = world.layer('background', {
+        update: update_position_fn(281, 1)
+    });
+    var middleground = world.layer('middleground', {
+        update: update_position_fn(307, 2)
+    });
+    var foreground = world.layer('foreground', {
+        update: update_position_fn(347, 3)
+    });
+    
+    world.run_loop(30);
+    
+    $('#game').bind('click', function(event) {
+        event.preventDefault();
+        var offset = $(this).offset();
+        var x = event.pageX - offset.left;
+        var y = event.pageY - offset.top;
+    });
+    
+    </script>
+</body>
+</html>
