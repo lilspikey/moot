@@ -106,6 +106,34 @@ var Moot = (function($) {
     
     
     return {
+        run_loop: function(callback, framerate) {
+            framerate = framerate || 10.0;
+            
+            // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+            var requestAnimFrame = (function(){
+                return  window.requestAnimationFrame       || 
+                        window.webkitRequestAnimationFrame || 
+                        window.mozRequestAnimationFrame    || 
+                        window.oRequestAnimationFrame      || 
+                        window.msRequestAnimationFrame     || 
+                        function(callback,  element){
+                            window.setTimeout(callback, 1000 / 60);
+                        };
+                })();
+            
+            var millis_per_frame = 1000.0/framerate;
+            
+            // TODO perhaps more robust way of trying to match desired framereate
+            var last_time = new Date().getTime();
+            (function animloop(){
+                var now = new Date().getTime();
+                if ( (now - last_time) >= millis_per_frame ) {
+                    callback();
+                    last_time = now;
+                }
+                requestAnimFrame(animloop, document.body);
+            })();
+        },
         world: function(element) {
             var world_element = $(element);
             var layers = {};
@@ -195,43 +223,6 @@ var Moot = (function($) {
                     return obj;
                 },
                 
-                /*defineAnimation: function(name, options) {
-                    options = $.extend({ frames: 1 }, options);
-                    if (!options.animate) {
-                        options.animate = function(sprite, animation) {
-                            var frames = options.frames;
-                            if ( frames > 1 ) {
-                                var frame = animation.frame;
-                                var next = (frame + 1) % frames;
-                                animation.elem.removeClass('frame-'+frame).addClass('frame-'+next);
-                                animation.frame = next;
-                            }
-                        }
-                    }
-                    animations[name] = options;
-                    return obj;
-                },*/
-                
-                /*listAnimations: function(fps) {
-                    if ( fps === undefined ) {
-                        fps = 10;
-                    }
-                    // for debugging list all animations defined
-                    var list = $('<dl class="debug-animations"></dl>');
-                    for ( var name in animations ) {
-                        var dd = $('<dd></dd>');
-                        var sprite = obj.sprite('debug-'+name);
-                        sprite.animation(name);
-                        dd.append(sprite.elem());
-                        list.append($('<dt></dt>').text(name)).append(dd);
-                        
-                        (function(sprite) {
-                            setInterval(function() { sprite.animate(); }, (1000/fps));
-                        })(sprite);
-                    }
-                    world_element.after(list)
-                },*/
-                
                 collision: function(types1, types2, handler) {
                     // register handler and it's inverse
                     types1 = types1.split(/\s+/);
@@ -246,6 +237,15 @@ var Moot = (function($) {
                             }
                         }
                     }
+                },
+                
+                run_loop: function(framerate) {
+                    var world = this;
+                    Moot.run_loop(function() {
+                        world.animate();
+                        world.update();
+                        world.checkCollisions();
+                    }, framerate);
                 },
                 
                 animate: function() {

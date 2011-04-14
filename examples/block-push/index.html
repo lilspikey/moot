@@ -295,15 +295,7 @@
 
     });
     
-    // re-enable to test animations
-    //world.listAnimations();
-    
-    setInterval(function() {
-        world.animate();
-        world.update();
-        world.checkCollisions();
-    }, 100);
-    
+    world.run_loop(10);
     
     $('#game').bind('click', function(event) {
         // might need to translate further for layer
