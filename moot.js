@@ -203,9 +203,13 @@ var Moot = (function($) {
             };
             
             var obj = {
-                layer: function(id) {
+                layer: function(id, proto) {
                     if ( id in layers ) {
                         return layers[id];
+                    }
+                    
+                    if ( proto == undefined ) {
+                        proto = {};
                     }
                     
                     var l = $('<div class="layer"></div>').attr({id: id});
@@ -217,10 +221,13 @@ var Moot = (function($) {
                         },
                         elem: function() {
                             return l;
+                        },
+                        update: function() {
+                            
                         }
                     };
                     layers[id] = obj;
-                    return obj;
+                    return $.extend(obj, proto);;
                 },
                 
                 collision: function(types1, types2, handler) {
@@ -255,6 +262,9 @@ var Moot = (function($) {
                 },
                 
                 update: function() {
+                    for ( var id in layers ) {
+                        layers[id].update();
+                    }
                     for ( var id in sprites ) {
                         sprites[id].update();
                     }
