@@ -52,6 +52,16 @@
         width: 32px;
         height: 32px;
     }
+    .sprite span.ship-left {
+        background: url(img/ship-left.png);
+        width: 32px;
+        height: 32px;
+    }
+    .sprite span.ship-right {
+        background: url(img/ship-right.png);
+        width: 32px;
+        height: 32px;
+    }
   </style>
 </head>
 <body>
@@ -85,8 +95,12 @@
     
     var ship = world.sprite('ship').
                 animation('ship', {cssClass: 'ship'}).
+                animation('ship-left', {cssClass: 'ship-left'}).
+                animation('ship-right', {cssClass: 'ship-right'}).
+                animation('main', ['ship', 'ship-left', 'ship-right']).
                 width(32).height(32).x((480-32)/2).y(280);
     
+    ship.animation('main').show('ship');
     foreground.add(ship);
     
     world.run_loop(30);
@@ -96,6 +110,17 @@
         var offset = $(this).offset();
         var x = event.pageX - offset.left;
         var y = event.pageY - offset.top;
+    });
+    $(document).keydown(function(event) {
+        switch(event.keyCode) {
+            case 37: ship.x(ship.x()-2); ship.animation('main').show('ship-left'); break;
+            case 39: ship.x(ship.x()+2); ship.animation('main').show('ship-right'); break;
+        };
+    }).keyup(function(event) {
+        switch(event.keyCode) {
+            case 37: ship.animation('main').show('ship'); break;
+            case 39: ship.animation('main').show('ship'); break;
+        };
     });
     
     </script>
