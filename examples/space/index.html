@@ -46,6 +46,12 @@
     .sprite span {
         position: absolute;
     }
+    
+    .sprite span.ship {
+        background: url(img/ship.png);
+        width: 32px;
+        height: 32px;
+    }
   </style>
 </head>
 <body>
@@ -76,6 +82,12 @@
     var foreground = world.layer('foreground', {
         update: update_position_fn(347, 3)
     });
+    
+    var ship = world.sprite('ship').
+                animation('ship', {cssClass: 'ship'}).
+                width(32).height(32).x((480-32)/2).y(280);
+    
+    foreground.add(ship);
     
     world.run_loop(30);
     
