@@ -12,19 +12,7 @@
         margin: 0;
     }
     #game {
-        width: 480px;
-        height: 320px;
         margin: 0 auto;
-        overflow: hidden;
-        position: relative;
-    }
-    
-    #game .layer {
-        min-width: 100%;
-        min-height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
     }
     
     #game #background {
@@ -37,14 +25,6 @@
     
     #game #foreground {
         background: url(img/stars-near.png);
-    }
-    
-    #game .layer .sprite {
-        position: absolute;
-    }
-    
-    .sprite span {
-        position: absolute;
     }
     
     .sprite span.ship {
@@ -71,7 +51,7 @@
     <script type="text/javascript" src="../js/jquery-1.5.min.js"></script>
     <script type="text/javascript" src="../../src/moot.js"></script>
     <script type="text/javascript">
-    var world = Moot.world('#game');
+    var world = Moot.world('#game').width(480).height(320);
     var update_position_fn = function(height, speed) {
         return function() {
             if ( this._y == undefined ) {

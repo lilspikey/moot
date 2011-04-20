@@ -104,6 +104,20 @@ var Moot = (function($) {
         return animation;
     };
     
+    var create_core_stylesheet = function(element) {
+        var selector = element.selector;
+        var css = [
+            '{ overflow: hidden; position: relative; }',
+            '.layer { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }',
+            '.layer .sprite { position: absolute; }',
+            '.layer .sprite span { position: absolute; }'
+        ];
+        for ( var i = 0; i < css.length; i++ ) {
+            css[i] = selector + ' ' + css[i];
+        }
+        var cssText = css.join('\n');
+        return $('<style type="text/css">'+cssText+'</style>');
+    };
     
     return {
         run_loop: function(callback, framerate) {
@@ -139,6 +153,9 @@ var Moot = (function($) {
             var layers = {};
             var sprites = {};
             var collision_handlers = {};
+            
+            var stylesheet = create_core_stylesheet(world_element);
+            world_element.after(stylesheet);
             
             var register_collision_handler = function(type1, type2, handler) {
                 if ( collision_handlers[type1] === undefined ) {
@@ -259,6 +276,22 @@ var Moot = (function($) {
                     for ( var id in sprites ) {
                         sprites[id].animate();
                     }
+                },
+                
+                width: function(w) {
+                    if ( w === undefined ) {
+                        return world_element.width();
+                    }
+                    world_element.width(w);
+                    return this;
+                },
+                
+                height: function(h) {
+                    if ( h === undefined ) {
+                        return world_element.height();
+                    }
+                    world_element.height(h);
+                    return this;
                 },
                 
                 update: function() {
