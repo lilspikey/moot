@@ -73,7 +73,34 @@
         update: update_position_fn(347, 3)
     });
     
-    var ship = world.sprite('ship').
+    var ship = world.sprite('ship', {
+        dir: { up: false, down: false, left: false, right: false },
+        update: function() {
+            if ( this.dir.left && !this.dir.right ) { 
+                ship.x(ship.x()-2);
+                ship.animation('main').show('ship-left');
+            }
+            else if ( this.dir.right && !this.dir.left ) {
+                ship.x(ship.x()+2);
+                ship.animation('main').show('ship-right');
+            }
+            else {
+                ship.animation('main').show('ship');
+            }
+            
+            if ( this.dir.up && !this.dir.down ) {
+                ship.y(ship.y()-2);
+            }
+            else if ( this.dir.down && !this.dir.up ) {
+                ship.y(ship.y()+2);
+            }
+        },
+        update_dir: function(dir) {
+            for ( var d in dir ) {
+                this.dir[d] = dir[d];
+            }
+        }
+    }).
                 animation('ship', {cssClass: 'ship'}).
                 animation('ship-left', {cssClass: 'ship-left'}).
                 animation('ship-right', {cssClass: 'ship-right'}).
@@ -93,13 +120,17 @@
     });
     $(document).keydown(function(event) {
         switch(event.keyCode) {
-            case 37: ship.x(ship.x()-2); ship.animation('main').show('ship-left'); break;
-            case 39: ship.x(ship.x()+2); ship.animation('main').show('ship-right'); break;
+            case 37: ship.update_dir({left: true}); break;
+            case 38: ship.update_dir({up: true}); break;
+            case 39: ship.update_dir({right: true}); break;
+            case 40: ship.update_dir({down: true}); break;
         };
     }).keyup(function(event) {
         switch(event.keyCode) {
-            case 37: ship.animation('main').show('ship'); break;
-            case 39: ship.animation('main').show('ship'); break;
+            case 37: ship.update_dir({left: false}); break;
+            case 38: ship.update_dir({up: false}); break;
+            case 39: ship.update_dir({right: false}); break;
+            case 40: ship.update_dir({down: false}); break;
         };
     });
     
