@@ -244,7 +244,7 @@ var Moot = (function($) {
                         }
                     };
                     layers[id] = obj;
-                    return $.extend(obj, proto);;
+                    return $.extend(obj, proto);
                 },
                 
                 collision: function(types1, types2, handler) {
@@ -261,6 +261,7 @@ var Moot = (function($) {
                             }
                         }
                     }
+                    return this;
                 },
                 
                 run_loop: function(framerate) {
