@@ -42,16 +42,22 @@
     
     div.sprite span.ship {
         background: url(img/ship.png);
+        top: -4px;
+        left: -4px;
         width: 32px;
         height: 32px;
     }
     div.sprite span.ship-left {
         background: url(img/ship-left.png);
+        top: -4px;
+        left: -4px;
         width: 32px;
         height: 32px;
     }
     div.sprite span.ship-right {
         background: url(img/ship-right.png);
+        top: -4px;
+        left: -4px;
         width: 32px;
         height: 32px;
     }
@@ -171,7 +177,7 @@
                 animation('ship-left', {cssClass: 'ship-left'}).
                 animation('ship-right', {cssClass: 'ship-right'}).
                 animation('main', ['ship', 'ship-left', 'ship-right']).
-                width(32).height(32).x((480-32)/2).y(280).
+                width(24).height(24).x((480-24)/2).y(280).
                 addType('ship');
     
     ship.animation('main').show('ship');
@@ -188,6 +194,9 @@
         // trigger explosion etc
         bullet.destroy();
         enemy.destroy();
+    }).
+    collision('ship', 'enemy', function(ship, enemy) {
+        ship.destroy();
     });
     
     $('#game').bind('click', function(event) {
