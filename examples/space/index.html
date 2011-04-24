@@ -17,30 +17,54 @@
     
     #game #background {
         background: url(img/stars-back.png);
+        z-index: 1;
     }
     
     #game #middleground {
         background: url(img/stars-mid.png);
+        z-index: 2;
     }
     
     #game #foreground {
         background: url(img/stars-near.png);
+        z-index: 3;
     }
     
-    .sprite span.ship {
+    #game #foreground div.bullet {
+        z-index: 1;
+    }
+    #game #foreground div.ship {
+        z-index: 2;
+    }
+    
+    div.sprite span.ship {
         background: url(img/ship.png);
         width: 32px;
         height: 32px;
     }
-    .sprite span.ship-left {
+    div.sprite span.ship-left {
         background: url(img/ship-left.png);
         width: 32px;
         height: 32px;
     }
-    .sprite span.ship-right {
+    div.sprite span.ship-right {
         background: url(img/ship-right.png);
         width: 32px;
         height: 32px;
+    }
+    div.sprite span.bullet {
+        background: url(img/bullet.png);
+        width: 8px;
+        height: 8px;
+    }
+    div.sprite span.bullet.frame-1 {
+        background-position: -8px 0;
+    }
+    div.sprite span.bullet.frame-2 {
+        background-position: -16px 0;
+    }
+    div.sprite span.bullet.frame-3 {
+        background-position: -24px 0;
     }
   </style>
 </head>
@@ -73,6 +97,22 @@
         update: update_position_fn(347, 3)
     });
     
+    var _bullet = 0;
+    var create_bullet = function(x, y) {
+        var bullet = world.sprite('bullet-' + (_bullet++), {
+            update: function() {
+                this.y(this.y()-7);
+                if ( this.y() < 0 ) {
+                    this.destroy();
+                }
+            }
+        }).width(8).height(8).x(x).y(y).
+        animation('main', { cssClass: 'bullet', frames: 4 }).
+        addType('bullet');
+
+        return bullet;
+    };
+    
     var ship = world.sprite('ship', {
         dir: { up: false, down: false, left: false, right: false },
         update: function() {
@@ -99,13 +139,20 @@
             for ( var d in dir ) {
                 this.dir[d] = dir[d];
             }
+        },
+        fire: function() {
+            var x = this.x() + this.width()/2 - 4;
+            var y = this.y() + this.width()/2;
+            var bullet = create_bullet(x, y);
+            foreground.add(bullet);
         }
     }).
                 animation('ship', {cssClass: 'ship'}).
                 animation('ship-left', {cssClass: 'ship-left'}).
                 animation('ship-right', {cssClass: 'ship-right'}).
                 animation('main', ['ship', 'ship-left', 'ship-right']).
-                width(32).height(32).x((480-32)/2).y(280);
+                width(32).height(32).x((480-32)/2).y(280).
+                addType('ship');
     
     ship.animation('main').show('ship');
     foreground.add(ship);
@@ -127,6 +174,7 @@
         };
     }).keyup(function(event) {
         switch(event.keyCode) {
+            case 32: ship.fire(); break;
             case 37: ship.update_dir({left: false}); break;
             case 38: ship.update_dir({up: false}); break;
             case 39: ship.update_dir({right: false}); break;

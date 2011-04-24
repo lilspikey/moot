@@ -402,6 +402,10 @@ var Moot = (function($) {
                             }
                             return _obj.height;
                         },
+                        destroy: function() {
+                            obj.elem().remove();
+                            delete sprites[id];
+                        },
                         hide: function() {
                             obj.elem().hide();
                             return obj;
