@@ -82,6 +82,47 @@
         width: 32px;
         height: 32px;
     }
+    div.sprite span.enemy.frame-2,
+    div.sprite span.enemy.frame-3 {
+        background-position: -32px 0;
+    }
+    div.sprite span.enemy.frame-4,
+    div.sprite span.enemy.frame-5 {
+        background-position: -64px 0;
+    }
+    div.sprite span.enemy.frame-6,
+    div.sprite span.enemy.frame-7 {
+        background-position: -96px 0;
+    }
+    div.sprite span.enemy.frame-8,
+    div.sprite span.enemy.frame-9 {
+        background-position: -64px 0;
+    }
+    div.sprite span.enemy.frame-10,
+    div.sprite span.enemy.frame-11 {
+        background-position: -32px 0;
+    }
+    div.sprite span.enemy.frame-14,
+    div.sprite span.enemy.frame-15 {
+        background-position: -192px 0;
+    }
+    div.sprite span.enemy.frame-16,
+    div.sprite span.enemy.frame-17 {
+        background-position: -160px 0;
+    }
+    div.sprite span.enemy.frame-18,
+    div.sprite span.enemy.frame-19 {
+        background-position: -128px 0;
+    }
+    div.sprite span.enemy.frame-20,
+    div.sprite span.enemy.frame-21 {
+        background-position: -160px 0;
+    }
+    div.sprite span.enemy.frame-22,
+    div.sprite span.enemy.frame-23 {
+        background-position: -192px 0;
+    }
+    
   </style>
 </head>
 <body>
@@ -134,8 +175,11 @@
         var enemy = world.sprite('enemy-' + (_enemy++), {
             
         }).width(24).height(24).x(x).y(y).
-        animation('main', { cssClass: 'enemy' }).
+        animation('main', { cssClass: 'enemy', frames: 24 }).
         addType('enemy');
+        
+        enemy.animation('main').frame(Math.floor(Math.random()*24));
+        
         return enemy;
     };
     
