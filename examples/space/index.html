@@ -123,6 +123,30 @@
         background-position: -192px 0;
     }
     
+    div.sprite span.enemy-explosion {
+        background: url(img/enemy-explosion.png);
+        top: -4px;
+        left: -4px;
+        width: 32px;
+        height: 32px;
+    }
+    
+    div.sprite span.enemy-explosion.frame-1 {
+        background-position: -32px 0;
+    }
+    div.sprite span.enemy-explosion.frame-2 {
+        background-position: -64px 0;
+    }
+    div.sprite span.enemy-explosion.frame-3 {
+        background-position: -96px 0;
+    }
+    div.sprite span.enemy-explosion.frame-4 {
+        background-position: -128px 0;
+    }
+    div.sprite span.enemy-explosion.frame-5 {
+        background-position: -160px 0;
+    }
+    
   </style>
 </head>
 <body>
@@ -183,6 +207,24 @@
         return enemy;
     };
     
+    var _enemy_explosion = 0;
+    var create_enemy_explosion = function(enemy) {
+        var _destroy_in = 6;
+        var explosion = world.sprite('enemy-explosion-' + (_enemy_explosion++), {
+            update: function() {
+                _destroy_in--;
+                if ( _destroy_in < 0 ) {
+                    this.destroy();
+                }
+            }
+        }).width(enemy.width()).height(enemy.height()).
+        animation('main', { cssClass: 'enemy-explosion', frames: 6 }).
+        x(enemy.x()).y(enemy.y()).
+        addType('explosion');
+        
+        return explosion;
+    };
+    
     var ship = world.sprite('ship', {
         dir: { up: false, down: false, left: false, right: false },
         update: function() {
@@ -236,6 +278,10 @@
     
     world.collision('bullet', 'enemy', function(bullet, enemy) {
         // trigger explosion etc
+        
+        var explosion = create_enemy_explosion(enemy);
+        foreground.add(explosion);
+        
         bullet.destroy();
         enemy.destroy();
     }).
