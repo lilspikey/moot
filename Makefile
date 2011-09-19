@@ -9,5 +9,6 @@ all:
 		echo "Minifying moot.js"; \
 		${COMPILER} src/moot.js >  dist/moot.min.js; \
 	else \
-		echo "You must have unglifyjs installed in order to minify moot."; \
+		echo "You must have uglifyjs installed in order to minify moot."; \
+		echo " see https://github.com/mishoo/UglifyJS"; \
 	fi
