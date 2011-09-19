@@ -168,13 +168,13 @@
             this.elem().css('background-position', '0 ' + this._y + 'px');
         }
     };
-    var background = world.layer('background', {
+    var background = world.create_layer('background', {
         update: update_position_fn(281, 1)
     });
-    var middleground = world.layer('middleground', {
+    var middleground = world.create_layer('middleground', {
         update: update_position_fn(307, 2)
     });
-    var foreground = world.layer('foreground', {
+    var foreground = world.create_layer('foreground', {
         update: update_position_fn(347, 3)
     });
     

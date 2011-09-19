@@ -267,6 +267,11 @@ var Moot = (function($) {
                             }
                         }
                     }
+                    else if ( typeof element == "string" ) {
+                        proto = proto || {};
+                        proto.id = element;
+                        element = null;                    
+                    }
                     
                     var id = (proto && proto.id) || (element && element.attr('id')) || layer_id.next();
                     var l = (element || $('<div />')).attr({id: id}).addClass(world_options.layer_class_name);
