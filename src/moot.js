@@ -148,14 +148,20 @@ var Moot = (function($) {
                 requestAnimFrame(animloop, document.body);
             })();
         },
-        world: function(element) {
+        world: function(element, options) {
+            var defaults = {
+                add_style_sheet: true
+            };  
+            var options = $.extend(defaults, options); 
             var world_element = $(element);
             var layers = {};
             var sprites = {};
             var collision_handlers = {};
             
-            var stylesheet = create_core_stylesheet(world_element);
-            world_element.after(stylesheet);
+            if ( add_style_sheet ) {
+                var stylesheet = create_core_stylesheet(world_element);
+                world_element.after(stylesheet);
+            }
             
             var register_collision_handler = function(type1, type2, handler) {
                 if ( collision_handlers[type1] === undefined ) {
