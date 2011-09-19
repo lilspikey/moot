@@ -150,15 +150,17 @@ var Moot = (function($) {
         },
         world: function(element, options) {
             var defaults = {
-                add_style_sheet: true
+                add_style_sheet: true,
+                layer_id_prefix: 'layer',
+                layer_class_name: 'layer'
             };  
-            var options = $.extend(defaults, options); 
+            var world_options = $.extend(defaults, options); 
             var world_element = $(element);
             var layers = {};
             var sprites = {};
             var collision_handlers = {};
             
-            if ( add_style_sheet ) {
+            if ( world_options.add_style_sheet ) {
                 var stylesheet = create_core_stylesheet(world_element);
                 world_element.after(stylesheet);
             }
@@ -225,20 +227,52 @@ var Moot = (function($) {
                 return intersections;
             };
             
-            var obj = {
-                layer: function(id, proto) {
-                    if ( id in layers ) {
-                        return layers[id];
+            var id_generator = function(prefix) {
+                var last = 0;
+                return {
+                    next: function() {
+                        for ( ;; ) {
+                            last++;
+                            var next = prefix + last;
+                            if ( $('#' + next).length == 0 ) {
+                                return next;
+                            }
+                        }
+                    }
+               }
+            }
+
+            var layer_id = id_generator(world_options.layer_id_prefix);
+
+            var world_obj = {
+
+                layer: function(id) {
+                    return layers[id];
+                },
+                
+                /**
+                 * create a layer using the given element and/or prototype.
+                 * both parameters are optional.
+                 * if no element is given then one will be generated and assigned
+                 * an id and class.
+                 **/
+                create_layer: function(element, proto) {
+                    if ( !proto ) {
+                        if ( element.selector === undefined ) {
+                            proto = element;
+                            element = null;
+
+                            if ( typeof proto === "string" ) {
+                                proto = { id: proto };
+                            }
+                        }
                     }
                     
-                    if ( proto == undefined ) {
-                        proto = {};
-                    }
-                    
-                    var l = $('<div class="layer"></div>').attr({id: id});
+                    var id = (proto && proto.id) || (element && element.attr('id')) || layer_id.next();
+                    var l = (element || $('<div />')).attr({id: id}).addClass(world_options.layer_class_name);
                     world_element.append(l);
                     
-                    var obj ={
+                    var layer_obj ={
                         add: function(sprite) {
                             l.append(sprite.elem());
                         },
@@ -249,8 +283,8 @@ var Moot = (function($) {
                             
                         }
                     };
-                    layers[id] = obj;
-                    return $.extend(obj, proto);
+                    layers[id] = layer_obj;
+                    return $.extend(layer_obj, proto);
                 },
                 
                 collision: function(types1, types2, handler) {
@@ -492,7 +526,14 @@ var Moot = (function($) {
                     return $.extend(obj, proto);
                 }
             }
-            return obj;
+
+            // initialise from DOM
+            world_element.
+                children('.' + world_options.layer_class_name).each(function() {
+                    world_obj.create_layer($(this));
+                });
+
+            return world_obj;
         }
     };
 })(jQuery);

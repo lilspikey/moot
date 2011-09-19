@@ -12,12 +12,19 @@ test("world has expected methods", function() {
     ok(world.checkCollisions !== undefined, "checkCollisions method present");
     ok(world.sprite !== undefined, "sprite method present");
 });
-test("world create layer", function() {
+test("world create layer from id", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var layer = world.layer('main-layer');
+    var layer = world.create_layer('main-layer');
     ok(layer !== undefined, "layer returned");
-    same(world.layer('main-layer'), layer, "layer not re-created");
+    same(world.layer('main-layer'), layer, "layer was not created");
+});
+test("world create layer from element", function() {
+    var world_elem = $('<div>');
+    var world = Moot.world(world_elem);
+    var layer = world.create_layer($('<div id="main-layer"></div>'));
+    ok(layer !== undefined, "layer returned");
+    same(world.layer('main-layer'), layer, "layer was not created");
 });
 test("world create sprite", function() {
     var world_elem = $('<div>');
@@ -25,20 +32,26 @@ test("world create sprite", function() {
     var sprite = world.sprite('main-sprite');
     ok(sprite !== undefined, "sprite returned");
     same(world.sprite('main-sprite'), sprite, "sprite not re-created");
-})
+});
+test("world initialised layers from DOM", function() {
+    var world_elem = $('<div><div id="dom-layer" class="layer"></div><div class="layer"></div></div>')
+    var world = Moot.world(world_elem);
+    var domLayer = world.layer('dom-layer');
+    ok(domLayer !== undefined, "dom layer created with world");
+});
 
 module("Layer")
 test("layer has expected methods", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var layer = world.layer('main-layer');
+    var layer = world.create_layer('main-layer');
     ok(layer.add !== undefined, "add method present");
     ok(layer.elem !== undefined, "add method present");
 });
 test("layer backed by div", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var layer = world.layer('main-layer');
+    var layer = world.create_layer('main-layer');
     var layer_elem = layer.elem();
     equals(layer_elem.attr('id'), 'main-layer', "correct layer id");
     ok(layer_elem.hasClass('layer'), "correct layer class");
@@ -47,14 +60,31 @@ test("layer backed by div", function() {
 test("layer div in world", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var layer = world.layer('main-layer');
+    var layer = world.create_layer('main-layer');
+    equals(world_elem.find('#main-layer').size(), 1,
+           "world element contains layer div");
+});
+test("layer uses existing div", function() {
+    var world_elem = $('<div>');
+    var world = Moot.world(world_elem);
+    var layer = world.create_layer($('<div id="main-layer" class="other-class"></div>'));
+    var layer_elem = layer.elem();
+    equals(layer_elem.attr('id'), 'main-layer', "correct layer id");
+    ok(layer_elem.hasClass('layer'), "correct layer class");
+    ok(layer_elem.hasClass('other-class'), "has existing class");
+    ok(layer_elem.get(0).nodeName.toLowerCase(), "div", "layer is div");
+});
+test("layer existing div in world", function() {
+    var world_elem = $('<div>');
+    var world = Moot.world(world_elem);
+    var layer = world.create_layer($('<div id="main-layer"></div>'));
     equals(world_elem.find('#main-layer').size(), 1,
            "world element contains layer div");
 });
 test("layer add sprite", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var layer = world.layer('main-layer');
+    var layer = world.create_layer('main-layer');
     var sprite = world.sprite('main-sprite');
     
     equals(world_elem.find('#main-layer > #main-sprite').size(), 0,

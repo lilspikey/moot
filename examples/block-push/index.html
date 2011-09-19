@@ -86,7 +86,7 @@
     <script type="text/javascript" src="../../src/moot.js"></script>
     <script type="text/javascript">
     var world = Moot.world('#game').width(480).height(320);
-    var layer = world.layer('foreground');
+    var layer = world.create_layer('foreground');
     
     var click_marker = world.sprite('click').addType('click').width(32).height(32).hide();
     click_marker.animation('click', { cssClass: 'click' });
