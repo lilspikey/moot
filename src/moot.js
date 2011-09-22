@@ -462,6 +462,7 @@ var Moot = (function($) {
                         height: s.height(),
                         types: {}
                     };
+
                     var _hide_after_frames = -1;
                     
                     var obj = {
@@ -593,6 +594,16 @@ var Moot = (function($) {
                     };
                     sprites[id] = obj;
                     obj = $.extend(obj, proto);
+
+                    // now load any types (which may trigger actions)
+                    var classes = s.attr('class').split(/\s+/);
+                    for ( var i = 0; i < classes.length; i++ ) {
+                        var type = classes[i];
+                        if ( type != world_options.sprite_class_name ) {
+                            obj.addType(type);
+                        }
+                    }
+
                     return obj;
                 }
             }
