@@ -152,7 +152,9 @@ var Moot = (function($) {
             var defaults = {
                 add_style_sheet: true,
                 layer_id_prefix: 'layer',
-                layer_class_name: 'layer'
+                layer_class_name: 'layer',
+                sprite_id_prefix: 'sprite',
+                sprite_class_name: 'sprite'
             };  
             var world_options = $.extend(defaults, options); 
             var world_element = $(element);
@@ -227,6 +229,25 @@ var Moot = (function($) {
                 return intersections;
             };
             
+            var get_element_args = function(element, proto, id_gen) {
+                if ( !proto ) {
+                    if ( element.selector === undefined ) {
+                        proto = element;
+                        element = null;
+
+                        if ( typeof proto === "string" ) {
+                            proto = { id: proto };
+                        }
+                    }
+                }
+                else if ( typeof element == "string" ) {
+                    proto = proto || {};
+                    proto.id = element;
+                    element = null;                    
+                }
+                return { proto: proto, element: element };
+            };
+
             var id_generator = function(prefix) {
                 var last = 0;
                 return {
@@ -243,6 +264,11 @@ var Moot = (function($) {
             }
 
             var layer_id = id_generator(world_options.layer_id_prefix);
+            var sprite_id = id_generator(world_options.sprite_id_prefix);
+            
+            var find_id_from_element = function(element, proto, id_gen) {
+                return (proto && proto.id) || (element && element.attr('id')) || id_gen.next();
+            }
 
             var world_obj = {
 
@@ -257,23 +283,11 @@ var Moot = (function($) {
                  * an id and class.
                  **/
                 create_layer: function(element, proto) {
-                    if ( !proto ) {
-                        if ( element.selector === undefined ) {
-                            proto = element;
-                            element = null;
-
-                            if ( typeof proto === "string" ) {
-                                proto = { id: proto };
-                            }
-                        }
-                    }
-                    else if ( typeof element == "string" ) {
-                        proto = proto || {};
-                        proto.id = element;
-                        element = null;                    
-                    }
+                    var args = get_element_args(element, proto);
+                    element = args.element;
+                    proto = args.proto;
                     
-                    var id = (proto && proto.id) || (element && element.attr('id')) || layer_id.next();
+                    var id = find_id_from_element(element, proto, layer_id);
                     var l = (element || $('<div />')).attr({id: id}).addClass(world_options.layer_class_name);
                     world_element.append(l);
                     
@@ -289,7 +303,16 @@ var Moot = (function($) {
                         }
                     };
                     layers[id] = layer_obj;
-                    return $.extend(layer_obj, proto);
+                    
+                    layer_obj = $.extend(layer_obj, proto);
+
+                    // initialise from DOM
+                    l.children('.' + world_options.sprite_class_name).each(function() {
+                        var sprite = world_obj.create_sprite($(this));
+                        layer_obj.add(sprite);
+                    });
+
+                    return layer_obj;
                 },
                 
                 collision: function(types1, types2, handler) {
@@ -395,18 +418,24 @@ var Moot = (function($) {
                 },
                 
                 sprite: function(id, proto) {
-                    if ( id in sprites ) {
-                        return sprites[id];
-                    }
-                    
-                    if ( proto == undefined ) {
-                        proto = {};
-                    }
-                    
-                    var s = $('<div class="sprite"></div>').attr({id: id});
+                   return sprites[id];
+                },
+
+                create_sprite: function(element, proto) {
+                    var args = get_element_args(element, proto);
+                    element = args.element;
+                    proto = args.proto;
+                    var id = find_id_from_element(element, proto, sprite_id);
+                    var s = (element || $('<div />')).addClass(world_options.sprite_class_name).attr({id: id});
                     var _animations = {};
                     var _animation_groups = {};
-                    var _obj = {x:0, y:0, width:0, height:0, types: {}};
+                    var _obj = { 
+                        x: s.position().left,
+                        y: s.position().top,
+                        width: s.width(),
+                        height: s.height(),
+                        types: {}
+                    };
                     var _hide_after_frames = -1;
                     
                     var obj = {

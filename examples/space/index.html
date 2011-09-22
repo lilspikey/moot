@@ -180,7 +180,7 @@
     
     var _bullet = 0;
     var create_bullet = function(x, y) {
-        var bullet = world.sprite('bullet-' + (_bullet++), {
+        var bullet = world.create_sprite('bullet-' + (_bullet++), {
             update: function() {
                 this.y(this.y()-7);
                 if ( this.y() < 0 ) {
@@ -196,7 +196,7 @@
     
     var _enemy = 0;
     var create_enemy = function(x, y) {
-        var enemy = world.sprite('enemy-' + (_enemy++), {
+        var enemy = world.create_sprite('enemy-' + (_enemy++), {
             
         }).width(24).height(24).x(x).y(y).
         animation('main', { cssClass: 'enemy', frames: 24 }).
@@ -210,7 +210,7 @@
     var _enemy_explosion = 0;
     var create_enemy_explosion = function(enemy) {
         var _destroy_in = 6;
-        var explosion = world.sprite('enemy-explosion-' + (_enemy_explosion++), {
+        var explosion = world.create_sprite('enemy-explosion-' + (_enemy_explosion++), {
             update: function() {
                 _destroy_in--;
                 if ( _destroy_in < 0 ) {
@@ -225,7 +225,7 @@
         return explosion;
     };
     
-    var ship = world.sprite('ship', {
+    var ship = world.create_sprite('ship', {
         dir: { up: false, down: false, left: false, right: false },
         update: function() {
             if ( this.dir.left && !this.dir.right ) { 
