@@ -1,5 +1,6 @@
 var Moot = (function($) {
-    
+    var VERSION = '0.0.1';
+
     var _simple_animation = function(sprite, options) {
         var a = $('<span></span>');
         sprite.elem().append(a);
@@ -120,6 +121,8 @@ var Moot = (function($) {
     };
     
     return {
+        version: VERSION,
+
         run_loop: function(callback, framerate) {
             framerate = framerate || 10.0;
             
