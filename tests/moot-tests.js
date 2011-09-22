@@ -29,7 +29,7 @@ test("world create layer from element", function() {
 test("world create sprite", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var sprite = world.sprite('main-sprite');
+    var sprite = world.create_sprite('main-sprite');
     ok(sprite !== undefined, "sprite returned");
     same(world.sprite('main-sprite'), sprite, "sprite not re-created");
 });
@@ -85,7 +85,7 @@ test("layer add sprite", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
     var layer = world.create_layer('main-layer');
-    var sprite = world.sprite('main-sprite');
+    var sprite = world.create_sprite('main-sprite');
     
     equals(world_elem.find('#main-layer > #main-sprite').size(), 0,
            "no sprite initially");
@@ -101,7 +101,7 @@ module("Sprite")
 test("sprite backed by div", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var sprite = world.sprite('main-sprite');
+    var sprite = world.create_sprite('main-sprite');
     var sprite_elem = sprite.elem();
     equals(sprite_elem.attr('id'), 'main-sprite', "correct sprite id");
     ok(sprite_elem.hasClass('sprite'), "correct sprite class");
@@ -110,7 +110,7 @@ test("sprite backed by div", function() {
 test("animation backed by span inside sprite div", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var sprite = world.sprite('main-sprite');
+    var sprite = world.create_sprite('main-sprite');
     equals(sprite, sprite.animation('animation', { cssClass: 'animation-class', frames: 2 }));
     
     var animation_elem = sprite.animation('animation').elem();
@@ -125,7 +125,7 @@ module("Animation")
 test("frame updates class", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var sprite = world.sprite('main-sprite');
+    var sprite = world.create_sprite('main-sprite');
     equals(sprite, sprite.animation('animation', { cssClass: 'animation-class', frames: 2 }));
     
     var animation = sprite.animation('animation');
@@ -141,7 +141,7 @@ test("frame updates class", function() {
 test("animate, pause and play", function() {
     var world_elem = $('<div>');
     var world = Moot.world(world_elem);
-    var sprite = world.sprite('main-sprite');
+    var sprite = world.create_sprite('main-sprite');
     equals(sprite, sprite.animation('animation', { cssClass: 'animation-class', frames: 2 }));
     
     var animation = sprite.animation('animation');
