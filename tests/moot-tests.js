@@ -142,6 +142,19 @@ test("sprite types loaded from DOM", function() {
     ok('my-type' in sprite.types(), "sprite has type from DOM");
 });
 
+module("Behavior")
+test("behavior init run", function() {
+    var world_elem = $('<div>');
+    var world = Moot.world(world_elem);
+    world.behavior('my-type', {
+        init: function() {
+            this.initRan = true;
+        }
+    });
+    var sprite = world.create_sprite($('<div id="main-sprite" class="my-type"></div>'));
+    ok(sprite.initRan, "init behavior ran");
+});
+
 module("Animation")
 test("frame updates class", function() {
     var world_elem = $('<div>');
