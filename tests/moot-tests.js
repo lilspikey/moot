@@ -33,11 +33,26 @@ test("world create sprite", function() {
     ok(sprite !== undefined, "sprite returned");
     same(world.sprite('main-sprite'), sprite, "sprite not re-created");
 });
+test("world create sprite from element", function() {
+    var world_elem = $('<div>');
+    var world = Moot.world(world_elem);
+    var sprite = world.create_sprite($('<div id="main-sprite"></div>'));
+    ok(sprite !== undefined, "sprite returned");
+    same(world.sprite('main-sprite'), sprite, "sprite not re-created");
+});
 test("world initialised layers from DOM", function() {
     var world_elem = $('<div><div id="dom-layer" class="layer"></div><div class="layer"></div></div>')
     var world = Moot.world(world_elem);
     var domLayer = world.layer('dom-layer');
     ok(domLayer !== undefined, "dom layer created with world");
+});
+test("world initialised layers and sprites from DOM", function() {
+    var world_elem = $('<div><div id="dom-layer" class="layer"><div id="a-sprite" class="sprite"></div></div><div class="layer"></div></div>')
+    var world = Moot.world(world_elem);
+    var domLayer = world.layer('dom-layer');
+    ok(domLayer !== undefined, "dom layer created with world");
+    var aSprite = world.sprite('a-sprite');
+    ok(aSprite !== undefined, "sprite created with world");
 });
 
 module("Layer")
