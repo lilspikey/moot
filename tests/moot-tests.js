@@ -135,6 +135,12 @@ test("animation backed by span inside sprite div", function() {
     var sprite_elem = sprite.elem();
     equals(sprite_elem.find('span.animation-class').get(0), animation_elem.get(0), 'sprite div contains animation span');
 });
+test("sprite types loaded from DOM", function() {
+    var world_elem = $('<div>');
+    var world = Moot.world(world_elem);
+    var sprite = world.create_sprite($('<div id="main-sprite" class="my-type"></div>'));
+    ok('my-type' in sprite.types(), "sprite has type from DOM");
+});
 
 module("Animation")
 test("frame updates class", function() {
