@@ -161,6 +161,7 @@ var Moot = (function($) {
             var layers = {};
             var sprites = {};
             var collision_handlers = {};
+            var behaviors = {};
             
             if ( world_options.add_style_sheet ) {
                 var stylesheet = create_core_stylesheet(world_element);
@@ -331,6 +332,24 @@ var Moot = (function($) {
                     }
                     return this;
                 },
+
+                /**
+                 * define an additional update and/or init function that
+                 * will be run for each sprite of the given type(s)
+                 * if a function is passed it will be used as an update function,
+                 * otherwise pass a object with an init and/or update function
+                 **/
+                behavior: function(types, behavior) {
+                    if ( typeof behavior == 'function' ) {
+                        behavior = { update: behavior };
+                    }
+                    types = types.split(/\s+/);
+                    for ( var i = 0; i < types.length; i++ ) {
+                        var type = types[i];
+                        behaviors[type] = behavior;
+                    }
+                    return this;
+                },
                 
                 run_loop: function(framerate) {
                     var world = this;
@@ -368,7 +387,14 @@ var Moot = (function($) {
                         layers[id].update();
                     }
                     for ( var id in sprites ) {
-                        sprites[id].update();
+                        var sprite = sprites[id];
+                        for ( var type in sprite.types() ) {
+                            if ( behaviors[type] ) {
+                                var update = behaviors[type].update;
+                                update.call(sprite);
+                            }
+                        }
+                        sprite.update();
                     }
                 },
                 
@@ -548,6 +574,15 @@ var Moot = (function($) {
                         addType: function(type) {
                             _obj.types[type]=true;
                             s.addClass(type);
+                            if ( behaviors[type] ) {
+                                var behavior = behaviors[type];
+                                if ( behavior ) {
+                                    var init = behavior.init;
+                                    if ( init ) {
+                                        init.call(obj);
+                                    }
+                                }
+                            }
                             return obj;
                         },
                         removeType: function(type) {
@@ -557,7 +592,8 @@ var Moot = (function($) {
                         }
                     };
                     sprites[id] = obj;
-                    return $.extend(obj, proto);
+                    obj = $.extend(obj, proto);
+                    return obj;
                 }
             }
 
