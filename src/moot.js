@@ -350,6 +350,11 @@ var Moot = (function($) {
                     for ( var i = 0; i < types.length; i++ ) {
                         var type = types[i];
                         behaviors[type] = behavior;
+
+                        // init behavior on existing sprites
+                        for ( var id in sprites ) {
+                            sprites[id].initBehavior(type);
+                        }
                     }
                     return this;
                 },
@@ -578,21 +583,26 @@ var Moot = (function($) {
                         addType: function(type) {
                             _obj.types[type]=true;
                             s.addClass(type);
-                            if ( behaviors[type] ) {
-                                var behavior = behaviors[type];
-                                if ( behavior ) {
-                                    var init = behavior.init;
-                                    if ( init ) {
-                                        init.call(obj);
-                                    }
-                                }
-                            }
+                            this.initBehavior(type);
                             return obj;
                         },
                         removeType: function(type) {
                             delete _obj.types[type];
                             s.removeClass(type);
                             return obj;
+                        },
+                        initBehavior: function(type) {
+                            if ( type in _obj.types ) {
+                                if ( behaviors[type] ) {
+                                    var behavior = behaviors[type];
+                                    if ( behavior ) {
+                                        var init = behavior.init;
+                                        if ( init ) {
+                                            init.call(obj);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     };
                     sprites[id] = obj;
