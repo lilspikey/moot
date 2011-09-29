@@ -293,7 +293,9 @@ var Moot = (function($) {
                     
                     var id = find_id_from_element(element, proto, layer_id);
                     var l = (element || $('<div />')).attr({id: id}).addClass(world_options.layer_class_name);
-                    world_element.append(l);
+                    if ( world_element.find('#'+id).size() == 0 ) {
+                        world_element.append(l);
+                    }
                     
                     var layer_obj ={
                         add: function(sprite) {
@@ -312,8 +314,7 @@ var Moot = (function($) {
 
                     // initialise from DOM
                     l.children('.' + world_options.sprite_class_name).each(function() {
-                        var sprite = world_obj.create_sprite($(this));
-                        layer_obj.add(sprite);
+                        world_obj.create_sprite($(this));
                     });
 
                     return layer_obj;
