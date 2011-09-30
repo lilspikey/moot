@@ -14,8 +14,8 @@ As we are using the DOM for this game engine CSS is lent on heavily.  Therefore 
 Creating a single "block" and adding it the game:
 
     var world = Moot.world('#game');
-    var layer = world.layer('foreground');
-    var block = world.sprite('block1').addType('block');
+    var layer = world.create_layer('foreground');
+    var block = world.create_sprite('block1').addType('block');
     block.x(5).y(10).width(32).height(32);
     block.animation('main', { cssClass: 'block-anim' })
     layer.add(block);
@@ -23,12 +23,20 @@ Creating a single "block" and adding it the game:
 Which would then (assuming a div with id "game") would yield this markup:
 
     <div id="game">
-        <div id="foreground" class="sprite">
+        <div id="foreground" class="layer">
             <div id="block1" class="sprite block" style="left: 5px; top: 10px; width: 32px; height: 32px">
                 <span class="block-anim"></span>
             </div>
         </div>
     </div>
+
+Alternatively if you start off with the markup above and load the sprites from it:
+
+    var world = Moot.world('#game');
+    var layer = world.layer('foreground');
+    var block = world.sprite('block1');
+
+(NB animations aren't loaded properly yet)
 
 CSS is used to handle the styling of animations.  Javascript is merely used to defines extra details such as the number of frames in an animation.  Animation occurs by moot adding a class of "frame-N" to the span of the animation.
 
